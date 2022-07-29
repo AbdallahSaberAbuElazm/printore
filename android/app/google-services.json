@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "961214974595",
+    "firebase_url": "https://printore-2364c-default-rtdb.firebaseio.com",
+    "project_id": "printore-2364c",
+    "storage_bucket": "printore-2364c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:961214974595:android:5896c96151de73174169b6",
+        "android_client_info": {
+          "package_name": "com.printsquare.printore"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "961214974595-lp7qekf9cgaq2886l1u3hhoumiaorat4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.printsquare.printore",
+            "certificate_hash": "950d3a3e5ad0243336dce77b0d12cbbd2613ad3d"
+          }
+        },
+        {
+          "client_id": "961214974595-ad80he77ut1pbd22627e19bmrsq7do4a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBEqLmDxddcHKXc-ouXX8Rgm4PFqOJ-d0U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "961214974595-ad80he77ut1pbd22627e19bmrsq7do4a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

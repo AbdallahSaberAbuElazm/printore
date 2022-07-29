@@ -1,0 +1,20 @@
+Relation one to many
+add post
+var currentUser = FirebaseAuth.instance.currentUser;
+var post = FirebaseFirestore.instance.collection('posts').doc().set({
+    'title': titleController,
+    'user' : 'users/'+currentUser!.uid;
+});
+=============================
+delete post
+FirebaseFirestore.instance.collection('posts').doc(ID).delete.then((onValue){});
+=============================
+read data from FirebaseFirestore
+
+=============================
+update data (delete user in post)
+FirebaseFirestore.instance.collection('posts').doc(ID).set({
+    'title': titleController,
+}).then((value){
+    print('record updated');
+});
