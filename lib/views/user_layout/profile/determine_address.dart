@@ -29,7 +29,9 @@ class _DetermineAddressState extends State<DetermineAddress> {
               centerTitle: true,
               leadingWidth: 100,
               leading: TextButton(
-                onPressed: () => Get.off(() => const NewAddress()),
+                onPressed: () => Get.off(() => NewAddress(
+                      userData: {},
+                    )),
                 child: Text(
                   'أضف عنوان جديد',
                   style: TextStyle(
@@ -73,7 +75,7 @@ class _DetermineAddressState extends State<DetermineAddress> {
               width: MediaQuery.of(context).size.width / 1.3,
               height: MediaQuery.of(context).size.height / 6,
               child: Image.asset(
-                'assets/images/no-address-found.png',
+                'assets/images/no_address_found.png',
                 fit: BoxFit.cover,
               ),
             ),
@@ -94,7 +96,9 @@ class _DetermineAddressState extends State<DetermineAddress> {
                     borderRadius: BorderRadius.all(Radius.circular(6)),
                   ),
                 ),
-                onPressed: () => Get.off(() => const NewAddress()),
+                onPressed: () => Get.off(() => NewAddress(
+                      userData: {},
+                    )),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

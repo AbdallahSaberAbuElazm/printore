@@ -5,7 +5,7 @@ import 'package:printore/views/user_layout/home/home_page.dart';
 class OptionProvider with ChangeNotifier {
   String sizeSelected = 'A5';
   int sizeIndex = 1;
-  String paperTypeSelected = 'عادي';
+  String paperTypeSelected = '70 جم';
   String layoutSelected = 'قائم';
   String wrappingSelected = 'بدون تغليف';
   String sideSelected = 'وجه واحد';
@@ -16,6 +16,12 @@ class OptionProvider with ChangeNotifier {
   Widget recentPage = const HomePage();
 
   final advancedDrawerController = AdvancedDrawerController();
+
+  void handleMenuButtonPressed() {
+    // NOTICE: Manage Advanced Drawer state through the Controller.
+    advancedDrawerController.value = AdvancedDrawerValue.visible();
+    advancedDrawerController.showDrawer();
+  }
 
   updateRecentPage(Widget page) {
     recentPage = page;

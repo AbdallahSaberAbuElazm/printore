@@ -13,12 +13,15 @@ import 'package:printore/provider/option_provider.dart';
 import 'package:printore/views/shared/styles/colors.dart';
 import 'package:printore/views/shared/styles/styles.dart';
 import 'package:printore/views/shared/util/check_internet_connection.dart';
+import 'package:printore/views/shared/util/util.dart';
 import 'dart:math' as math;
 import 'package:printore/views/shared/widgets/cart_shopping_icon.dart';
 import 'package:printore/views/user_layout/cart/cart_screen.dart';
 import 'package:printore/views/user_layout/file_upload/image.render.dart';
 import 'package:printore/views/user_layout/file_upload/pdf_render.dart';
 import 'package:printore/views/user_layout/file_upload/pick_multi_files.dart';
+import 'package:printore/views/user_layout/home/home.dart';
+import 'package:printore/views/user_layout/home/home_page.dart';
 import 'package:printore/views/user_layout/option/option_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:printore/model/product/file_model.dart';
@@ -50,63 +53,63 @@ class _UploadPageState extends State<UploadPage> {
     Get.find<CartController>();
   }
 
+  Future<bool> _onWillPop() async {
+    return (await Utils.showDialogOnWillPop(context: context)) ?? false;
+  }
+
   @override
   Widget build(BuildContext context) {
     CheckInternetConnection.CheckUserConnection(context: context);
     option = Provider.of<OptionProvider>(context);
-    return Directionality(
-        textDirection: TextDirection.rtl,
-        child: Scaffold(
-          backgroundColor: Theme.of(context).backgroundColor,
-          appBar: AppBar(
-            backgroundColor: MainColor.darkGreyColor,
-            title: Styles.appBarText('تحميل الملفات', context),
-            centerTitle: true,
-            actions: <Widget>[
-              InkWell(
-                child: CartShoppingIcon(),
-                onTap: () => Get.to(() => CartScreen()),
-              ),
-            ],
-            leading: IconButton(
-              onPressed: _handleMenuButtonPressed,
-              icon: ValueListenableBuilder<AdvancedDrawerValue>(
-                valueListenable: option!.advancedDrawerController,
-                builder: (_, value, __) {
-                  return AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 250),
-                    child: Icon(
-                      value.visible ? Icons.clear : Icons.menu,
-                      key: ValueKey<bool>(value.visible),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ),
-          body: SingleChildScrollView(
-            physics: const ScrollPhysics(),
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _drawStepper(context),
-                  _drawStepperNameRow(context),
-                  _buttonUpload(context),
-                  const SizedBox(
-                    height: 20,
+    return WillPopScope(
+        onWillPop: _onWillPop,
+        child: Directionality(
+            textDirection: TextDirection.rtl,
+            child: Scaffold(
+              backgroundColor: Theme.of(context).backgroundColor,
+              appBar: AppBar(
+                backgroundColor: MainColor.darkGreyColor,
+                title: Styles.appBarText('تحميل الملفات', context),
+                centerTitle: true,
+                actions: <Widget>[
+                  InkWell(
+                    child: CartShoppingIcon(),
+                    onTap: () => Get.to(() => CartScreen()),
                   ),
-                  // _drawCenter(),
-                  _drawShowFileData(context),
-                ]),
-          ),
-        ));
-  }
-
-  void _handleMenuButtonPressed() {
-    // NOTICE: Manage Advanced Drawer state through the Controller.
-    option!.advancedDrawerController.value = AdvancedDrawerValue.visible();
-    option!.advancedDrawerController.showDrawer();
+                ],
+                leading: IconButton(
+                  onPressed: option!.handleMenuButtonPressed,
+                  icon: ValueListenableBuilder<AdvancedDrawerValue>(
+                    valueListenable: option!.advancedDrawerController,
+                    builder: (_, value, __) {
+                      return AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 250),
+                        child: Icon(
+                          value.visible ? Icons.clear : Icons.menu,
+                          key: ValueKey<bool>(value.visible),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+              body: SingleChildScrollView(
+                physics: const ScrollPhysics(),
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _drawStepper(context),
+                      _drawStepperNameRow(context),
+                      _buttonUpload(context),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      // _drawCenter(),
+                      _drawShowFileData(context),
+                    ]),
+              ),
+            )));
   }
 
 // draw stepper
@@ -433,6 +436,7 @@ class _UploadPageState extends State<UploadPage> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => OptionScreen(
+                              updateFile: false,
                               fileTitle:
                                   snapshot.data!.docs[index]['file_name'] ?? '',
                               fileId: snapshot.data!.docs[index].id,

@@ -5,10 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:printore/controller/cart_controller.dart';
+import 'package:printore/model/product/file_model.dart';
 import 'package:printore/views/shared/styles/colors.dart';
 import 'package:printore/views/shared/styles/styles.dart';
 import 'package:printore/views/user_layout/home/home.dart';
 import 'package:printore/views/user_layout/home/upload_page.dart';
+import 'package:printore/views/user_layout/option/option_screen.dart';
 
 class CartItems extends StatefulWidget {
   final bool summary;
@@ -83,8 +85,27 @@ class _CartItemsState extends State<CartItems> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const InkWell(
-                          onTap: null,
+                        InkWell(
+                          onTap: () => Get.to(() => OptionScreen(
+                              updateFile: true,
+                              file: FileModel(
+                                  customerId: _cartController
+                                      .cart[widget.index].customerId,
+                                  fileId:
+                                      _cartController.cart[widget.index].fileId,
+                                  downloadUrl: _cartController
+                                      .cart[widget.index].downloadUrl,
+                                  fileExtension: _cartController
+                                      .cart[widget.index].fileExtension,
+                                  fileName: _cartController
+                                      .cart[widget.index].fileName,
+                                  numPages: _cartController
+                                      .cart[widget.index].numPages,
+                                  uploadAt: _cartController
+                                      .cart[widget.index].uploadAt),
+                              fileId: _cartController.cart[widget.index].fileId,
+                              fileTitle:
+                                  _cartController.cart[widget.index].fileName)),
                           child: SizedBox(
                             width: 20,
                             child: Icon(
@@ -203,7 +224,7 @@ class _CartItemsState extends State<CartItems> {
                 : const SizedBox.shrink(),
             Center(
               child: SizedBox(
-                width: MediaQuery.of(context).size.width / 1.6,
+                width: MediaQuery.of(context).size.width / 1.7,
                 child: Text(widget.map[widget.index].fileName,
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.headline4),
@@ -247,6 +268,7 @@ class _CartItemsState extends State<CartItems> {
                                       options[index],
                                       style: const TextStyle(
                                           color: Colors.white, fontSize: 10),
+                                      textAlign: TextAlign.center,
                                     )),
                                   );
                                 },

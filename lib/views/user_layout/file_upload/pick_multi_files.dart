@@ -67,10 +67,12 @@ class PickMultiFiles {
                   final output = await getTemporaryDirectory();
                   final pdfFile = File(
                       "${output.path}/${UserSharedPreferences.getUserName()}.pdf");
-                  // final doc = await PDFDoc.fromFile(pdfFile);
 
                   await pdfFile.writeAsBytes(await pdf.save());
-                  uploadFile(pdfFile);
+                  final doc = await PDFDoc.fromFile(pdfFile);
+                  if (doc.length > 0) {
+                    uploadFile(pdfFile);
+                  }
                 } on FirebaseException catch (e) {
                   return Utils.snackBar(context: context, msg: e.message);
                 }

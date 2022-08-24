@@ -1,16 +1,19 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter_advanced_drawer/flutter_advanced_drawer.dart';
 import 'package:get/get.dart';
 import 'package:printore/views/shared/constant/constant.dart';
 import 'package:printore/views/shared/styles/colors.dart';
 import 'package:printore/views/shared/styles/styles.dart';
+import 'package:printore/views/shared/util/advanced_drawer.dart';
 import 'package:printore/views/shared/util/user_shared_preferences.dart';
+import 'package:printore/views/shared/widgets/user_navigation_drawer.dart';
 import 'package:printore/views/user_layout/home/home.dart';
 import 'package:printore/views/user_layout/home/home_page.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class QRCodeUser extends StatelessWidget {
-  const QRCodeUser({Key? key}) : super(key: key);
+  QRCodeUser({Key? key}) : super(key: key);
 
   Future<bool> _onWillPop() async {
     return (await Get.off(
@@ -25,79 +28,107 @@ class QRCodeUser extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: _onWillPop,
-      child: Directionality(
+        onWillPop: _onWillPop,
+        child: Directionality(
           textDirection: TextDirection.rtl,
-          child: Scaffold(
-            backgroundColor: Theme.of(context).backgroundColor,
-            appBar: AppBar(
-              backgroundColor: MainColor.darkGreyColor,
-              title: Styles.appBarText('كود الإستلام', context),
-              centerTitle: true,
-              leading: const SizedBox.shrink(),
-              actions: [
-                Padding(
-                    padding: const EdgeInsets.only(left: 8),
-                    child: IconButton(
-                      onPressed: () => Get.off(
-                        () => Home(
-                          recentPage: const HomePage(),
-                          selectedIndex: 0,
-                        ),
-                      ),
-                      icon: const Icon(
-                        Icons.arrow_forward,
-                        color: Colors.white,
-                        size: 26,
-                      ),
-                    )),
-              ],
-            ),
-            body: Stack(
-              children: [
-                Center(
-                    child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    QrImage(
-                      data:
-                          '${Constant.user!.uid}${UserSharedPreferences.getUserName()}',
-                      size: MediaQuery.of(context).size.width * 0.7,
-                      backgroundColor: Colors.white,
+          child: AdvancedDrawer(
+              backdropColor: const Color.fromARGB(255, 236, 239, 241),
+              controller: AdvancedDrawerClass.advancedDrawerController,
+              animationCurve: Curves.easeInOut,
+              animationDuration: const Duration(milliseconds: 80),
+              animateChildDecoration: true,
+              rtlOpening: true,
+              disabledGestures: false,
+              childDecoration: const BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(16)),
+              ),
+              drawer: const UserNavigationDrawer(),
+              child: Scaffold(
+                backgroundColor: Theme.of(context).backgroundColor,
+                appBar: AppBar(
+                  backgroundColor: MainColor.darkGreyColor,
+                  title: Styles.appBarText('كود الإستلام', context),
+                  centerTitle: true,
+                  leading: IconButton(
+                    onPressed: AdvancedDrawerClass.handleMenuButtonPressed,
+                    icon: ValueListenableBuilder<AdvancedDrawerValue>(
+                      valueListenable:
+                          AdvancedDrawerClass.advancedDrawerController,
+                      builder: (_, value, __) {
+                        return AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 250),
+                          child: Icon(
+                            value.visible ? Icons.clear : Icons.menu,
+                            color: MainColor.darkGreyColor,
+                            key: ValueKey<bool>(value.visible),
+                          ),
+                        );
+                      },
                     ),
-                    Flexible(
-                        child: Container(
-                      padding: const EdgeInsets.only(top: 30),
-                      width: MediaQuery.of(context).size.width / 2,
-                      child: Text(
-                        'من فضلك إظهر الكود عند إستلامك لأوراقك المطبوعة لإتمام العملية',
-                        style: Theme.of(context).textTheme.bodyText1,
-                      ),
-                    ))
+                  ),
+                  actions: [
+                    Padding(
+                        padding: const EdgeInsets.only(left: 8),
+                        child: IconButton(
+                          onPressed: () => Get.off(
+                            () => Home(
+                              recentPage: const HomePage(),
+                              selectedIndex: 0,
+                            ),
+                          ),
+                          icon: const Icon(
+                            Icons.arrow_forward,
+                            color: Colors.white,
+                            size: 26,
+                          ),
+                        )),
                   ],
-                )),
-                // Align(
-                //     alignment: FractionalOffset.bottomCenter,
-                //     child: ClipPath(
-                //       clipper: CurvedTopClipper(),
-                //       child: Container(
-                //         color: MainColor.darkGreyColor,
-                //         height: 250,
-                //         child: Center(
-                //             child: Padding(
-                //           padding: const EdgeInsets.only(top: 50),
-                //           child: Text(
-                //             'sdfsdfdsf',
-                //             style: TextStyle(color: MainColor.yellowColor),
-                //           ),
-                //         )),
-                //       ),
-                //     ))
-              ],
-            ),
-          )),
-    );
+                ),
+                body: Stack(
+                  children: [
+                    Center(
+                        child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        QrImage(
+                          data:
+                              '${Constant.user!.uid}${UserSharedPreferences.getUserName()}',
+                          size: MediaQuery.of(context).size.width * 0.7,
+                          backgroundColor: Colors.white,
+                        ),
+                        Flexible(
+                            child: Container(
+                          padding: const EdgeInsets.only(top: 30),
+                          width: MediaQuery.of(context).size.width / 2,
+                          child: Text(
+                            'من فضلك إظهر الكود عند إستلامك لأوراقك المطبوعة لإتمام العملية',
+                            style: Theme.of(context).textTheme.bodyText1,
+                          ),
+                        ))
+                      ],
+                    )),
+                    // Align(
+                    //     alignment: FractionalOffset.bottomCenter,
+                    //     child: ClipPath(
+                    //       clipper: CurvedTopClipper(),
+                    //       child: Container(
+                    //         color: MainColor.darkGreyColor,
+                    //         height: 250,
+                    //         child: Center(
+                    //             child: Padding(
+                    //           padding: const EdgeInsets.only(top: 50),
+                    //           child: Text(
+                    //             'sdfsdfdsf',
+                    //             style: TextStyle(color: MainColor.yellowColor),
+                    //           ),
+                    //         )),
+                    //       ),
+                    //     ))
+                  ],
+                ),
+              )),
+        ));
   }
 }
 

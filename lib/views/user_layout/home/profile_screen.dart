@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_advanced_drawer/flutter_advanced_drawer.dart';
 import 'package:get/get.dart';
 import 'package:path/path.dart';
 import 'package:printore/controller/user_controller.dart';
+import 'package:printore/provider/option_provider.dart';
 import 'package:printore/views/auth/widgets/password_form_field.dart';
 import 'package:printore/views/auth/widgets/text_form_field.dart';
 import 'package:printore/views/shared/styles/colors.dart';
 import 'package:printore/views/shared/styles/styles.dart';
 import 'package:printore/views/shared/util/check_internet_connection.dart';
 import 'package:printore/views/shared/util/user_shared_preferences.dart';
+import 'package:printore/views/shared/util/util.dart';
 import 'package:printore/views/shared/widgets/upload_image_profile.dart';
+import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -58,120 +62,151 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.dispose();
   }
 
+  OptionProvider? option;
   @override
   Widget build(BuildContext context) {
+    Future<bool> _onWillPop() async {
+      return (await Utils.showDialogOnWillPop(context: context)) ?? false;
+    }
+
     CheckInternetConnection.CheckUserConnection(context: context);
-    return Directionality(
-        textDirection: TextDirection.rtl,
-        child: Scaffold(
-            backgroundColor: Theme.of(context).backgroundColor,
-            extendBodyBehindAppBar: true,
-            appBar: AppBar(
-              elevation: 0,
-              backgroundColor: Colors.transparent,
-              title: Styles.appBarText('حسابي', context),
-              centerTitle: true,
-              leading: const SizedBox.shrink(),
-            ),
-            body: SingleChildScrollView(
-              physics: const ScrollPhysics(),
-              child: Column(children: [
-                Stack(children: [
-                  Image.asset(
-                    'assets/images/profileBackground.png',
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height / 2.7,
-                    fit: BoxFit.fill,
-                    //color: const Color(0xffe5e5e5),
-                  ),
-                  Positioned(
-                      top: MediaQuery.of(context).size.height / 9.5,
-                      left: 30,
-                      right: 30,
-                      child: Column(
-                        children: [
-                          Stack(
-                            alignment: AlignmentDirectional.bottomStart,
-                            children: [
-                              CircleAvatar(
-                                radius: 60,
-                                backgroundColor: MainColor.yellowColor,
-                                backgroundImage:
-                                    (UserSharedPreferences.getUserAvatarUrl() !=
-                                            null)
-                                        ? NetworkImage(UserSharedPreferences
-                                            .getUserAvatarUrl()!)
-                                        : Image.asset('assets/images/logo.png')
-                                            as ImageProvider,
+    option = Provider.of<OptionProvider>(context);
+    return WillPopScope(
+        onWillPop: _onWillPop,
+        child: Directionality(
+            textDirection: TextDirection.rtl,
+            child: Directionality(
+                textDirection: TextDirection.rtl,
+                child: Scaffold(
+                    backgroundColor: Theme.of(context).backgroundColor,
+                    extendBodyBehindAppBar: true,
+                    appBar: AppBar(
+                      elevation: 0,
+                      backgroundColor: Colors.transparent,
+                      title: Styles.appBarText('حسابي', context),
+                      centerTitle: true,
+                      leading: IconButton(
+                        onPressed: option!.handleMenuButtonPressed,
+                        icon: ValueListenableBuilder<AdvancedDrawerValue>(
+                          valueListenable: option!.advancedDrawerController,
+                          builder: (_, value, __) {
+                            return AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 250),
+                              child: Icon(
+                                value.visible ? Icons.clear : Icons.menu,
+                                key: ValueKey<bool>(value.visible),
                               ),
-                              InkWell(
-                                onTap: () {
-                                  UploadImageProfile.uploadImageProfile(
-                                          context: context)
-                                      .then((value) {
-                                    if (value.isNotEmpty) {
-                                      setState(() {
-                                        UserSharedPreferences.setUserAvatar(
-                                            url: value['url'],
-                                            photoName:
-                                                basename(value['avatarName']));
-                                      });
-                                    }
-                                  });
-                                },
-                                child: CircleAvatar(
-                                  backgroundColor: Colors.grey[300],
-                                  child: Icon(
-                                    Icons.image,
-                                    color: MainColor.darkGreyColor,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 15, bottom: 15),
-                            child: Text(
-                              UserSharedPreferences.getUserName().toString(),
-                              style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w400,
-                                  fontStyle: FontStyle.normal,
-                                  fontSize: 24.0),
-                            ),
-                          )
-                        ],
-                      )),
-                ]),
-                Transform.translate(
-                  offset: const Offset(0, 20),
-                  child: SizedBox(
-                    height: MediaQuery.of(context).size.height / 1.9,
-                    child: ListView(
-                      padding: const EdgeInsets.only(bottom: 30),
-                      shrinkWrap: true,
-                      children: [
-                        _userInfo(
-                            title: 'معلومات الحساب الشخصي',
-                            suffixIcon: Icons.person,
-                            widget: _expandedUserInfo(context: context),
-                            context: context),
-                        _userInfo(
-                            title: 'تعديل البريد الإلكتروني',
-                            suffixIcon: Icons.email,
-                            widget: _expandedUpdateEmail(context: context),
-                            context: context),
-                        _userInfo(
-                            title: 'تعديل كلمة المرور',
-                            suffixIcon: Icons.person,
-                            widget: _expandedUpdatePassword(context: context),
-                            context: context),
-                      ],
+                            );
+                          },
+                        ),
+                      ),
                     ),
-                  ),
-                )
-              ]),
-            )));
+                    body: SingleChildScrollView(
+                      physics: const ScrollPhysics(),
+                      child: Column(children: [
+                        Stack(children: [
+                          Image.asset(
+                            'assets/images/profileBackground.png',
+                            width: MediaQuery.of(context).size.width,
+                            height: MediaQuery.of(context).size.height / 2.7,
+                            fit: BoxFit.fill,
+                            //color: const Color(0xffe5e5e5),
+                          ),
+                          Positioned(
+                              top: MediaQuery.of(context).size.height / 9.5,
+                              left: 30,
+                              right: 30,
+                              child: Column(
+                                children: [
+                                  Stack(
+                                    alignment: AlignmentDirectional.bottomStart,
+                                    children: [
+                                      CircleAvatar(
+                                        radius: 60,
+                                        backgroundColor: MainColor.yellowColor,
+                                        backgroundImage: (UserSharedPreferences
+                                                    .getUserAvatarUrl() !=
+                                                null)
+                                            ? NetworkImage(UserSharedPreferences
+                                                .getUserAvatarUrl()!)
+                                            : Image.asset(
+                                                    'assets/images/logo.png')
+                                                as ImageProvider,
+                                      ),
+                                      InkWell(
+                                        onTap: () {
+                                          UploadImageProfile.uploadImageProfile(
+                                                  context: context)
+                                              .then((value) {
+                                            if (value.isNotEmpty) {
+                                              setState(() {
+                                                UserSharedPreferences
+                                                    .setUserAvatar(
+                                                        url: value['url'],
+                                                        photoName: basename(
+                                                            value[
+                                                                'avatarName']));
+                                              });
+                                            }
+                                          });
+                                        },
+                                        child: CircleAvatar(
+                                          backgroundColor: Colors.grey[300],
+                                          child: Icon(
+                                            Icons.image,
+                                            color: MainColor.darkGreyColor,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        top: 15, bottom: 15),
+                                    child: Text(
+                                      UserSharedPreferences.getUserName()
+                                          .toString(),
+                                      style: const TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w400,
+                                          fontStyle: FontStyle.normal,
+                                          fontSize: 24.0),
+                                    ),
+                                  )
+                                ],
+                              )),
+                        ]),
+                        Transform.translate(
+                          offset: const Offset(0, 20),
+                          child: SizedBox(
+                            height: MediaQuery.of(context).size.height / 1.9,
+                            child: ListView(
+                              padding: const EdgeInsets.only(bottom: 30),
+                              shrinkWrap: true,
+                              children: [
+                                _userInfo(
+                                    title: 'معلومات الحساب الشخصي',
+                                    suffixIcon: Icons.person,
+                                    widget: _expandedUserInfo(context: context),
+                                    context: context),
+                                _userInfo(
+                                    title: 'تعديل البريد الإلكتروني',
+                                    suffixIcon: Icons.email,
+                                    widget:
+                                        _expandedUpdateEmail(context: context),
+                                    context: context),
+                                _userInfo(
+                                    title: 'تعديل كلمة المرور',
+                                    suffixIcon: Icons.person,
+                                    widget: _expandedUpdatePassword(
+                                        context: context),
+                                    context: context),
+                              ],
+                            ),
+                          ),
+                        )
+                      ]),
+                    )))));
   }
 
   Widget _userInfo(

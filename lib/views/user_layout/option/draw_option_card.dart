@@ -11,6 +11,7 @@ import 'package:printore/model/product/file_model.dart';
 import 'package:printore/model/product/option/option.dart';
 import 'package:printore/provider/option_provider.dart';
 import 'package:printore/views/shared/styles/colors.dart';
+import 'package:printore/views/shared/styles/styles.dart';
 import 'package:printore/views/shared/util/user_shared_preferences.dart';
 import 'package:printore/views/user_layout/cart/cart_screen.dart';
 import 'package:printore/views/user_layout/option/draw_color_selected.dart';
@@ -22,8 +23,12 @@ import 'package:provider/provider.dart';
 class DrawOptionCard extends StatefulWidget {
   final String? fileId;
   final FileModel fileModel;
+  final statusFile;
   const DrawOptionCard(
-      {Key? key, required this.fileId, required this.fileModel})
+      {Key? key,
+      required this.fileId,
+      required this.fileModel,
+      required this.statusFile})
       : super(key: key);
 
   @override
@@ -88,51 +93,10 @@ class _DrawOptionCardState extends State<DrawOptionCard> {
               streamSide:
                   FirebaseFirestore.instance.collection('sides').snapshots(),
             ),
-            _addNote(),
+            Styles.addNote(context: context, controller: _noteController),
             _addButton()
           ],
         ));
-  }
-
-  Widget _addNote() {
-    return Padding(
-      padding: const EdgeInsets.only(
-        top: 12,
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'ملاحظاتك',
-            style: Theme.of(context).textTheme.bodyText1,
-          ),
-          Card(
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(6)),
-            ),
-            color: Colors.white.withOpacity(0.5),
-            elevation: 3,
-            shadowColor: Colors.grey.withOpacity(0.1),
-            margin: const EdgeInsets.only(bottom: 9, top: 8),
-            child: TextFormField(
-              controller: _noteController,
-              decoration: InputDecoration(
-                  border: const OutlineInputBorder(borderSide: BorderSide.none),
-                  fillColor: MainColor.darkGreyColor,
-                  focusColor: MainColor.darkGreyColor,
-                  hoverColor: MainColor.darkGreyColor,
-                  iconColor: MainColor.darkGreyColor),
-              minLines: 4,
-              cursorColor: MainColor.darkGreyColor,
-              style: Theme.of(context).textTheme.bodyText1,
-              keyboardType: TextInputType.multiline,
-              maxLines: null,
-            ),
-          ),
-        ],
-      ),
-    );
   }
 
   Widget _addButton() {
@@ -162,18 +126,27 @@ class _DrawOptionCardState extends State<DrawOptionCard> {
             productMap
                 .addAll({'noOfCopies': 1, 'ordered': false, 'finished': false});
 
-            await FirebaseFirestore.instance
-                .collection('users')
-                .doc(user!.uid)
-                .collection('carts')
-                .add(productMap);
+            (widget.statusFile)
+                ? await FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(user!.uid)
+                    .collection('carts')
+                    .add(productMap)
+                : await FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(user!.uid)
+                    .collection('carts')
+                    .doc(widget.fileId.toString())
+                    .update(productMap);
 
-            await FirebaseFirestore.instance
-                .collection('users')
-                .doc(user.uid)
-                .collection('files')
-                .doc(widget.fileId)
-                .delete();
+            if (!widget.statusFile) {
+              await FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(user.uid)
+                  .collection('files')
+                  .doc(widget.fileId)
+                  .delete();
+            }
             Get.off(() => CartScreen());
           },
           style: ButtonStyle(

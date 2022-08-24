@@ -7,9 +7,11 @@ import 'package:printore/views/shared/styles/styles.dart';
 import 'package:printore/views/auth/widgets/text_form_field.dart';
 import 'package:printore/views/shared/util/check_internet_connection.dart';
 import 'package:printore/views/user_layout/profile/determine_address.dart';
+import 'package:printore/views/user_layout/profile/my_addresses.dart';
 
 class NewAddress extends StatefulWidget {
-  const NewAddress({Key? key}) : super(key: key);
+  final Map<String, dynamic> userData;
+  NewAddress({Key? key, required this.userData}) : super(key: key);
   @override
   State<NewAddress> createState() => _NewAddressState();
 }
@@ -27,6 +29,14 @@ class _NewAddressState extends State<NewAddress> {
 
   final _formKey = GlobalKey<FormState>();
   final AddressController _addressController = Get.find();
+  @override
+  void initState() {
+    _rNameController.text = widget.userData['recieverName'] ?? '';
+    _phoneController.text = widget.userData['recieverPhoneNo'] ?? '';
+    _addressNameController.text = widget.userData['address'] ?? "";
+    super.initState();
+  }
+
   @override
   void dispose() {
     _phoneController.dispose();
@@ -54,7 +64,7 @@ class _NewAddressState extends State<NewAddress> {
               Padding(
                   padding: const EdgeInsets.only(left: 8),
                   child: IconButton(
-                    onPressed: () => Get.off(() => const DetermineAddress()),
+                    onPressed: () => Get.off(() => MyAddress()),
                     icon: const Icon(
                       Icons.arrow_forward,
                       color: Colors.white,
@@ -125,10 +135,12 @@ class _NewAddressState extends State<NewAddress> {
                           _rNameController.text = '';
                           _phoneController.text = '';
                           _addressNameController.text = '';
-                          Get.off(() => const DetermineAddress());
+                          Get.off(() => MyAddress());
                         },
-                        child: const Text(
-                          'أضف عنوان جدبد',
+                        child: Text(
+                          (widget.userData.isEmpty)
+                              ? 'أضف عنوان جدبد'
+                              : 'تعديل',
                           style: TextStyle(color: Colors.white, fontSize: 17),
                         )),
                   ),

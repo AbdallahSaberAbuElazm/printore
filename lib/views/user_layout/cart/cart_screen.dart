@@ -87,11 +87,6 @@ class CartScreen extends StatelessWidget {
                       physics: const ScrollPhysics(),
                       itemCount: _cartController.cart.length,
                       itemBuilder: (context, index) {
-                        // final price =
-                        //     _cartController.cart[index].numPages! * 4 * 0.5;
-
-                        // _cartController.updatePrice(price);
-
                         return CartItems(
                           index: index,
                           summary: false,
@@ -101,10 +96,3 @@ class CartScreen extends StatelessWidget {
                 )))));
   }
 }
-      //               })),
-      //     )
-      //   ]),
-      // ),
-    
-  
-

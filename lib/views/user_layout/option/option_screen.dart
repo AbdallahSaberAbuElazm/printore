@@ -14,11 +14,13 @@ class OptionScreen extends StatelessWidget {
   final String? fileTitle;
   final String? fileId;
   final FileModel file;
+  final updateFile;
   OptionScreen(
       {Key? key,
       required this.fileTitle,
       required this.fileId,
-      required this.file})
+      required this.file,
+      required this.updateFile})
       : super(key: key);
   OptionProvider? option;
   @override
@@ -86,6 +88,7 @@ class OptionScreen extends StatelessWidget {
                     DrawOptionCard(
                       fileId: fileId,
                       fileModel: file,
+                      statusFile: updateFile,
                     )
                   ]),
             )));

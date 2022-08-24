@@ -97,21 +97,41 @@ class FireAuth {
           result: result,
         );
         if (result['isAdmin'] == true && result['printingOfficer'] == false) {
-          Get.off(() => const AddPrintOfficers());
+          // Get.offAll(() => const AddPrintOfficers());
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const AddPrintOfficers()));
         } else if (result['printingOfficer'] == false) {
-          Get.off(
-            () => Home(
-              recentPage: const HomePage(),
-              selectedIndex: 0,
-            ),
-          );
+          // Get.offAll(
+          //   () => Home(
+          //     recentPage: const HomePage(),
+          //     selectedIndex: 0,
+          //   ),
+          // );
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => Home(
+                  recentPage: const HomePage(),
+                  selectedIndex: 0,
+                ),
+              ));
         } else if (result['printingOfficer'] == true) {
-          Get.off(
+          Get.offAll(
             () => PrintOfficeHome(
               recentPage: const PrintOfficeHomePage(),
               selectedIndex: 0,
             ),
           );
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PrintOfficeHome(
+                  recentPage: const PrintOfficeHomePage(),
+                  selectedIndex: 0,
+                ),
+              ));
         }
       } else {
         Navigator.pop(context);

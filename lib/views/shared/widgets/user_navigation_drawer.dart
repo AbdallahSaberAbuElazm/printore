@@ -8,11 +8,13 @@ import 'package:printore/views/auth/login.dart';
 import 'package:printore/views/shared/styles/colors.dart';
 import 'package:printore/views/shared/util/user_shared_preferences.dart';
 import 'package:printore/views/shared/widgets/upload_image_profile.dart';
+import 'package:printore/views/user_layout/discount/discount.dart';
 import 'package:printore/views/user_layout/file_upload/convert_to_pdf.dart';
 import 'package:printore/views/user_layout/frequently_question/frequently_asked_question_screen.dart';
 import 'package:printore/views/user_layout/offers/offers.dart';
 import 'package:printore/views/user_layout/profile/my_addresses.dart';
 import 'package:printore/views/user_layout/qr_code/qr_code_user.dart';
+import 'package:printore/views/user_layout/who_are_we/contact_us.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -94,7 +96,7 @@ class _UserNavigationDrawerState extends State<UserNavigationDrawer> {
               icon: Icons.print_outlined),
           _drawListTitle(
               context: context,
-              func: () => Get.to(() => const QRCodeUser()),
+              func: () => Get.to(() => QRCodeUser()),
               title: 'كود فحص الطلب',
               icon: Icons.qr_code_2_outlined),
           _drawListTitle(
@@ -109,7 +111,7 @@ class _UserNavigationDrawerState extends State<UserNavigationDrawer> {
               icon: Icons.my_location_outlined),
           _drawListTitleWithImage(
               context: context,
-              func: null,
+              func: () => Get.to(() => Discount()),
               title: 'أكواد الخصم',
               url: 'assets/images/voucher.png'),
           _drawListTitle(
@@ -124,7 +126,7 @@ class _UserNavigationDrawerState extends State<UserNavigationDrawer> {
               icon: Icons.people),
           _drawListTitle(
               context: context,
-              func: null,
+              func: () => Get.to(() => ContactUs()),
               title: 'للتواصل معنا',
               icon: Icons.contact_phone_outlined),
           _drawListTitle(

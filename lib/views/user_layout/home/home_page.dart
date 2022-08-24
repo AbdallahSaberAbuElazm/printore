@@ -47,7 +47,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ],
                 leading: IconButton(
-                  onPressed: _handleMenuButtonPressed,
+                  onPressed: option!.handleMenuButtonPressed,
                   icon: ValueListenableBuilder<AdvancedDrawerValue>(
                     valueListenable: option!.advancedDrawerController,
                     builder: (_, value, __) {
@@ -99,12 +99,6 @@ class _HomePageState extends State<HomePage> {
                 ]),
               ))),
     );
-  }
-
-  void _handleMenuButtonPressed() {
-    // NOTICE: Manage Advanced Drawer state through the Controller.
-    option!.advancedDrawerController.value = AdvancedDrawerValue.visible();
-    option!.advancedDrawerController.showDrawer();
   }
 
   Widget drawPaperDetail(

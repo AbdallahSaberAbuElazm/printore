@@ -1,17 +1,19 @@
 import 'package:get/get.dart';
 import 'package:printore/model/location/address.dart';
+import 'package:printore/model/user/address.dart';
 import 'package:printore/services/firestore_db.dart';
 
 class AddressController extends GetxController {
   final address = <Address>[].obs;
-  final userAddress = <Address>[].obs;
+  final userAddress = <UserAddress>[].obs;
 
   getAddress(String userId) {
     address.clear();
     address.bindStream(FirestoreDB().getAddress(userId));
-    userAddress.bindStream(FirestoreDB().getUserAddresses());
+    // userAddress.bindStream(FirestoreDB().getUserAddresses());
   }
 
+  addNewAddress(){}
   addAddressDuringOrder(
       {required String receiverName,
       required String receiverPhoneNo,

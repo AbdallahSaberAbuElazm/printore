@@ -32,9 +32,12 @@ class Styles {
       BuildContext context, String name, dynamic onPressed) {
     return ElevatedButton(
       onPressed: onPressed,
-      child: Text(name,
-          style: Theme.of(context).textTheme.bodyText2,
-          textAlign: TextAlign.right),
+      child: Padding(
+        padding: const EdgeInsets.all(3.0),
+        child: Text(name,
+            style: Theme.of(context).textTheme.bodyText2,
+            textAlign: TextAlign.right),
+      ),
     );
   }
 
@@ -291,6 +294,50 @@ class Styles {
           ),
         )
       ],
+    );
+  }
+
+  //add note to textarea
+  static Widget addNote(
+      {required BuildContext context,
+      required TextEditingController controller}) {
+    return Padding(
+      padding: const EdgeInsets.only(
+        top: 12,
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'ملاحظاتك',
+            style: Theme.of(context).textTheme.bodyText1,
+          ),
+          Card(
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(6)),
+            ),
+            color: Colors.white.withOpacity(0.5),
+            elevation: 3,
+            shadowColor: Colors.grey.withOpacity(0.1),
+            margin: const EdgeInsets.only(bottom: 9, top: 8),
+            child: TextFormField(
+              controller: controller,
+              decoration: InputDecoration(
+                  border: const OutlineInputBorder(borderSide: BorderSide.none),
+                  fillColor: MainColor.darkGreyColor,
+                  focusColor: MainColor.darkGreyColor,
+                  hoverColor: MainColor.darkGreyColor,
+                  iconColor: MainColor.darkGreyColor),
+              minLines: 4,
+              cursorColor: MainColor.darkGreyColor,
+              style: Theme.of(context).textTheme.bodyText1,
+              keyboardType: TextInputType.multiline,
+              maxLines: null,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -1,26 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:printore/views/shared/styles/colors.dart';
+import 'package:printore/views/user_layout/profile/new_address.dart';
 
 class AddressCard extends StatelessWidget {
-  const AddressCard({Key? key}) : super(key: key);
+  final String userName;
+  final String phone;
+  final String location;
+  AddressCard(
+      {Key? key,
+      required this.userName,
+      required this.phone,
+      required this.location})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      physics: const ScrollPhysics(),
-      child: SizedBox(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height / 1.1,
-        child: ListView.builder(
-            padding: const EdgeInsets.only(top: 20, bottom: 66),
-            shrinkWrap: true,
-            physics: const ScrollPhysics(),
-            itemCount: 6,
-            itemBuilder: (context, index) {
-              return _addressesInfo(context: context);
-            }),
-      ),
-    );
+    return _addressesInfo(context: context);
   }
 
   Widget _addressesInfo({required BuildContext context}) {
@@ -46,28 +42,34 @@ class AddressCard extends StatelessWidget {
             ]),
         child: Column(
           children: [
-            const Align(
+            Align(
               alignment: Alignment.topLeft,
               child: InkWell(
-                onTap: null,
+                onTap: () => Get.to(() => NewAddress(
+                      userData: {
+                        'recieverName': userName,
+                        'recieverPhoneNo': phone,
+                        'address': location
+                      },
+                    )),
                 child: Icon(
                   Icons.mode_edit_outline_sharp,
-                  size: 23,
+                  size: 26,
                   color: Colors.lightBlue,
                 ),
               ),
             ),
             _drawUserInfo(
                 icon: Icons.person_outline_outlined,
-                title: 'أحمد عاطف',
+                title: userName,
                 context: context),
             _drawUserInfo(
                 icon: Icons.phone_android_outlined,
-                title: '01022150743',
+                title: phone,
                 context: context),
             _drawUserInfo(
                 icon: Icons.location_on_outlined,
-                title: '9 شارع الجيش - زفتي - الغربية',
+                title: location,
                 context: context)
           ],
         ));

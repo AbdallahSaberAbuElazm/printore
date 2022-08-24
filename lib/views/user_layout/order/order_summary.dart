@@ -60,7 +60,7 @@ class OrderSummary extends StatelessWidget {
           bottomSheet: BottomCenterButton(
             buttonTitle: 'إستمرار',
             onPressed: () {
-              Get.to(() => const QRCodeUser());
+              Get.to(() => QRCodeUser());
               _orderController.sendOrder(
                   order: Order(
                       orderId: '',
