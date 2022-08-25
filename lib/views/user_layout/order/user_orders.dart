@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_advanced_drawer/flutter_advanced_drawer.dart';
 import 'package:printore/views/shared/styles/colors.dart';
-import 'package:printore/views/shared/util/advanced_drawer.dart';
+
 import 'package:printore/views/shared/widgets/user_navigation_drawer.dart';
 
 class UserOrders extends StatelessWidget {
   UserOrders({Key? key}) : super(key: key);
+
+  final _advancedDrawerController = AdvancedDrawerController();
+  void _handleMenuButtonPressed() {
+    _advancedDrawerController.showDrawer();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +18,7 @@ class UserOrders extends StatelessWidget {
         textDirection: TextDirection.rtl,
         child: AdvancedDrawer(
             backdropColor: const Color.fromARGB(255, 236, 239, 241),
-            controller: AdvancedDrawerClass.advancedDrawerController,
+            controller: _advancedDrawerController,
             animationCurve: Curves.easeInOut,
             animationDuration: const Duration(milliseconds: 80),
             animateChildDecoration: true,
@@ -35,10 +40,9 @@ class UserOrders extends StatelessWidget {
                         fontWeight: FontWeight.w700)),
                 centerTitle: true,
                 leading: IconButton(
-                  onPressed: AdvancedDrawerClass.handleMenuButtonPressed,
+                  onPressed: _handleMenuButtonPressed,
                   icon: ValueListenableBuilder<AdvancedDrawerValue>(
-                    valueListenable:
-                        AdvancedDrawerClass.advancedDrawerController,
+                    valueListenable: _advancedDrawerController,
                     builder: (_, value, __) {
                       return AnimatedSwitcher(
                         duration: const Duration(milliseconds: 250),

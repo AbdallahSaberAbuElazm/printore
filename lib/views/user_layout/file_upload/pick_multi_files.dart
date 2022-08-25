@@ -127,18 +127,19 @@ class PickMultiFiles {
         status: '... جاري التحميل',
       );
       final file = File(image.path);
-      final img = pw.MemoryImage(file.readAsBytesSync());
-      pdf.addPage(pw.Page(
-          pageFormat: PdfPageFormat.a4,
-          build: (pw.Context context) {
-            return pw.Center(child: pw.Image(img));
-          }));
-      final output = await getTemporaryDirectory();
-      final pdfFile =
-          File("${output.path}/${UserSharedPreferences.getUserName()}.pdf");
-      await pdfFile.writeAsBytes(await pdf.save());
+      // final img = pw.MemoryImage(file.readAsBytesSync());
+      // pdf.addPage(pw.Page(
+      //     pageFormat: PdfPageFormat.a4,
+      //     build: (pw.Context context) {
+      //       return pw.Center(child: pw.Image(img));
+      //     }));
+      // final output = await getTemporaryDirectory();
+      // final pdfFile =
+      //     File("${output.path}/${UserSharedPreferences.getUserName()}.pdf");
+      // await pdfFile.writeAsBytes(await pdf.save());
       try {
-        uploadFile(pdfFile);
+        // uploadFile(pdfFile);
+        uploadFile(file);
       } on FirebaseException catch (e) {
         return Utils.snackBar(context: context, msg: e.message);
       }

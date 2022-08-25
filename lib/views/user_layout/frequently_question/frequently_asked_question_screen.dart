@@ -5,7 +5,7 @@ import 'package:printore/controller/freq_asked_question__controller.dart';
 import 'package:printore/provider/option_provider.dart';
 import 'package:printore/views/shared/styles/colors.dart';
 import 'package:printore/views/shared/styles/styles.dart';
-import 'package:printore/views/shared/util/advanced_drawer.dart';
+
 import 'package:printore/views/shared/util/check_internet_connection.dart';
 import 'package:printore/views/shared/widgets/user_navigation_drawer.dart';
 import 'package:printore/views/user_layout/home/home.dart';
@@ -62,6 +62,11 @@ class _FrequentlyAskedQuestionScreenState
         false;
   }
 
+  final _advancedDrawerController = AdvancedDrawerController();
+  void _handleMenuButtonPressed() {
+    _advancedDrawerController.showDrawer();
+  }
+
   @override
   Widget build(BuildContext context) {
     CheckInternetConnection.CheckUserConnection(context: context);
@@ -72,7 +77,7 @@ class _FrequentlyAskedQuestionScreenState
         textDirection: TextDirection.rtl,
         child: AdvancedDrawer(
             backdropColor: const Color.fromARGB(255, 236, 239, 241),
-            controller: AdvancedDrawerClass.advancedDrawerController,
+            controller: _advancedDrawerController,
             animationCurve: Curves.easeInOut,
             animationDuration: const Duration(milliseconds: 80),
             animateChildDecoration: true,
@@ -89,10 +94,9 @@ class _FrequentlyAskedQuestionScreenState
                   title: Styles.appBarText('الاسئلة الشائعة', context),
                   centerTitle: true,
                   leading: IconButton(
-                    onPressed: AdvancedDrawerClass.handleMenuButtonPressed,
+                    onPressed: _handleMenuButtonPressed,
                     icon: ValueListenableBuilder<AdvancedDrawerValue>(
-                      valueListenable:
-                          AdvancedDrawerClass.advancedDrawerController,
+                      valueListenable: _advancedDrawerController,
                       builder: (_, value, __) {
                         return AnimatedSwitcher(
                           duration: const Duration(milliseconds: 250),

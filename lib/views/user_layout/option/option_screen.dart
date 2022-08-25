@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:printore/model/product/file_model.dart';
 import 'package:printore/views/shared/styles/colors.dart';
 import 'package:printore/views/shared/styles/styles.dart';
 import 'dart:math' as math;
@@ -13,7 +12,7 @@ import 'package:provider/provider.dart';
 class OptionScreen extends StatelessWidget {
   final String? fileTitle;
   final String? fileId;
-  final FileModel file;
+  final file;
   final updateFile;
   OptionScreen(
       {Key? key,

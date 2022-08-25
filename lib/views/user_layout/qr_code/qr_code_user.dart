@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:printore/views/shared/constant/constant.dart';
 import 'package:printore/views/shared/styles/colors.dart';
 import 'package:printore/views/shared/styles/styles.dart';
-import 'package:printore/views/shared/util/advanced_drawer.dart';
 import 'package:printore/views/shared/util/user_shared_preferences.dart';
 import 'package:printore/views/shared/widgets/user_navigation_drawer.dart';
 import 'package:printore/views/user_layout/home/home.dart';
@@ -13,7 +12,8 @@ import 'package:printore/views/user_layout/home/home_page.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class QRCodeUser extends StatelessWidget {
-  QRCodeUser({Key? key}) : super(key: key);
+  final bool fromDrawer;
+  QRCodeUser({Key? key, required this.fromDrawer}) : super(key: key);
 
   Future<bool> _onWillPop() async {
     return (await Get.off(
@@ -25,6 +25,11 @@ class QRCodeUser extends StatelessWidget {
         false;
   }
 
+  final _advancedDrawerController = AdvancedDrawerController();
+  void _handleMenuButtonPressed() {
+    _advancedDrawerController.showDrawer();
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -33,7 +38,7 @@ class QRCodeUser extends StatelessWidget {
           textDirection: TextDirection.rtl,
           child: AdvancedDrawer(
               backdropColor: const Color.fromARGB(255, 236, 239, 241),
-              controller: AdvancedDrawerClass.advancedDrawerController,
+              controller: _advancedDrawerController,
               animationCurve: Curves.easeInOut,
               animationDuration: const Duration(milliseconds: 80),
               animateChildDecoration: true,
@@ -49,39 +54,42 @@ class QRCodeUser extends StatelessWidget {
                   backgroundColor: MainColor.darkGreyColor,
                   title: Styles.appBarText('كود الإستلام', context),
                   centerTitle: true,
-                  leading: IconButton(
-                    onPressed: AdvancedDrawerClass.handleMenuButtonPressed,
-                    icon: ValueListenableBuilder<AdvancedDrawerValue>(
-                      valueListenable:
-                          AdvancedDrawerClass.advancedDrawerController,
-                      builder: (_, value, __) {
-                        return AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 250),
-                          child: Icon(
-                            value.visible ? Icons.clear : Icons.menu,
-                            color: MainColor.darkGreyColor,
-                            key: ValueKey<bool>(value.visible),
+                  leading: (fromDrawer)
+                      ? IconButton(
+                          onPressed: _handleMenuButtonPressed,
+                          icon: ValueListenableBuilder<AdvancedDrawerValue>(
+                            valueListenable: _advancedDrawerController,
+                            builder: (_, value, __) {
+                              return AnimatedSwitcher(
+                                duration: const Duration(milliseconds: 250),
+                                child: Icon(
+                                  value.visible ? Icons.clear : Icons.menu,
+                                  color: Colors.white,
+                                  key: ValueKey<bool>(value.visible),
+                                ),
+                              );
+                            },
                           ),
-                        );
-                      },
-                    ),
-                  ),
+                        )
+                      : const SizedBox.shrink(),
                   actions: [
-                    Padding(
-                        padding: const EdgeInsets.only(left: 8),
-                        child: IconButton(
-                          onPressed: () => Get.off(
-                            () => Home(
-                              recentPage: const HomePage(),
-                              selectedIndex: 0,
-                            ),
-                          ),
-                          icon: const Icon(
-                            Icons.arrow_forward,
-                            color: Colors.white,
-                            size: 26,
-                          ),
-                        )),
+                    (fromDrawer)
+                        ? const SizedBox.shrink()
+                        : Padding(
+                            padding: const EdgeInsets.only(left: 8),
+                            child: IconButton(
+                              onPressed: () => Get.off(
+                                () => Home(
+                                  recentPage: const HomePage(),
+                                  selectedIndex: 0,
+                                ),
+                              ),
+                              icon: const Icon(
+                                Icons.arrow_forward,
+                                color: Colors.white,
+                                size: 26,
+                              ),
+                            )),
                   ],
                 ),
                 body: Stack(

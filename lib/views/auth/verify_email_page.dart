@@ -82,7 +82,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
                     const SizedBox(
                       height: 90,
                     ),
-                    Styles.logo(),
+                    Styles.logo(width: 70, height: 60),
                     const SizedBox(height: 90),
                     Text(
                       'تم إرسال رسالة تأكيد إلي بريدك الإلكتروني',

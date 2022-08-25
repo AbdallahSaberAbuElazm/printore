@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:printore/controller/cart_controller.dart';
-import 'package:printore/model/product/file_model.dart';
 import 'package:printore/views/shared/styles/colors.dart';
 import 'package:printore/views/shared/styles/styles.dart';
 import 'package:printore/views/user_layout/home/home.dart';
@@ -88,21 +87,7 @@ class _CartItemsState extends State<CartItems> {
                         InkWell(
                           onTap: () => Get.to(() => OptionScreen(
                               updateFile: true,
-                              file: FileModel(
-                                  customerId: _cartController
-                                      .cart[widget.index].customerId,
-                                  fileId:
-                                      _cartController.cart[widget.index].fileId,
-                                  downloadUrl: _cartController
-                                      .cart[widget.index].downloadUrl,
-                                  fileExtension: _cartController
-                                      .cart[widget.index].fileExtension,
-                                  fileName: _cartController
-                                      .cart[widget.index].fileName,
-                                  numPages: _cartController
-                                      .cart[widget.index].numPages,
-                                  uploadAt: _cartController
-                                      .cart[widget.index].uploadAt),
+                              file: _cartController.cart[widget.index],
                               fileId: _cartController.cart[widget.index].fileId,
                               fileTitle:
                                   _cartController.cart[widget.index].fileName)),

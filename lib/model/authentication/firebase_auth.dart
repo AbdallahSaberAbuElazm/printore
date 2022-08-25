@@ -35,6 +35,7 @@ class FireAuth {
         password: password,
       );
       user = userCredential.user;
+      // ignore: deprecated_member_use
       await user!.updateProfile(displayName: firstName + lastName);
       await user.reload();
       user = auth.currentUser;

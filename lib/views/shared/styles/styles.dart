@@ -59,10 +59,10 @@ class Styles {
   }
 
 // app logo
-  static Widget logo() {
+  static Widget logo({required double width, required double height}) {
     return SizedBox(
-      width: 70,
-      height: 60,
+      width: width,
+      height: height,
       child: Center(
         child: Image.asset(
           'assets/images/printore.png',

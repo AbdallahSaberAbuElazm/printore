@@ -11,10 +11,15 @@ import 'package:printore/views/shared/widgets/upload_image_profile.dart';
 import 'package:printore/views/user_layout/discount/discount.dart';
 import 'package:printore/views/user_layout/file_upload/convert_to_pdf.dart';
 import 'package:printore/views/user_layout/frequently_question/frequently_asked_question_screen.dart';
+import 'package:printore/views/user_layout/home/home.dart';
+import 'package:printore/views/user_layout/home/home_page.dart';
+import 'package:printore/views/user_layout/home/profile_screen.dart';
+import 'package:printore/views/user_layout/home/upload_page.dart';
 import 'package:printore/views/user_layout/offers/offers.dart';
 import 'package:printore/views/user_layout/profile/my_addresses.dart';
 import 'package:printore/views/user_layout/qr_code/qr_code_user.dart';
 import 'package:printore/views/user_layout/who_are_we/contact_us.dart';
+import 'package:printore/views/user_layout/who_are_we/who_are_we.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -35,7 +40,7 @@ class _UserNavigationDrawerState extends State<UserNavigationDrawer> {
     option = Provider.of<OptionProvider>(context, listen: false);
     return SafeArea(
       child: ListView(
-        padding: EdgeInsets.zero,
+        padding: EdgeInsets.only(bottom: 20),
         children: [
           UserAccountsDrawerHeader(
             decoration: const BoxDecoration(
@@ -78,10 +83,6 @@ class _UserNavigationDrawerState extends State<UserNavigationDrawer> {
                   await launch(url);
                 }
               },
-              //  () {
-              //   FocusScope.of(context).requestFocus(FocusNode());
-              //   const WebViewer();
-              // },
               title: 'دمج ملفاتك في ملف واحد',
               url: 'assets/images/mergeFiles.png'),
           _drawListTitleWithImage(
@@ -91,12 +92,40 @@ class _UserNavigationDrawerState extends State<UserNavigationDrawer> {
               url: 'assets/images/convertToPDF.png'),
           _drawListTitle(
               context: context,
-              func: null,
+              func: () {
+                option!.advancedDrawerController.value =
+                    AdvancedDrawerValue.hidden();
+                Navigator.pop(context);
+                Get.to(() => Home(recentPage: HomePage(), selectedIndex: 0));
+              },
               title: 'مطبوعاتي',
               icon: Icons.print_outlined),
           _drawListTitle(
               context: context,
-              func: () => Get.to(() => QRCodeUser()),
+              func: () {
+                option!.advancedDrawerController.value =
+                    AdvancedDrawerValue.hidden();
+                Navigator.pop(context);
+                Get.to(() => Home(recentPage: UploadPage(), selectedIndex: 2));
+              },
+              title: 'ملفاتك',
+              icon: Icons.file_upload_outlined),
+          _drawListTitle(
+              context: context,
+              func: () {
+                option!.advancedDrawerController.value =
+                    AdvancedDrawerValue.hidden();
+                Navigator.pop(context);
+                Get.to(
+                    () => Home(recentPage: ProfileScreen(), selectedIndex: 4));
+              },
+              title: 'الملف الشخصي',
+              icon: Icons.person_outline_outlined),
+          _drawListTitle(
+              context: context,
+              func: () => Get.to(() => QRCodeUser(
+                    fromDrawer: true,
+                  )),
               title: 'كود فحص الطلب',
               icon: Icons.qr_code_2_outlined),
           _drawListTitle(
@@ -121,7 +150,7 @@ class _UserNavigationDrawerState extends State<UserNavigationDrawer> {
               icon: Icons.question_mark_rounded),
           _drawListTitle(
               context: context,
-              func: null,
+              func: () => Get.to(() => WhoAreWe()),
               title: 'من نحن',
               icon: Icons.people),
           _drawListTitle(

@@ -5,7 +5,7 @@ import 'package:flutter_advanced_drawer/flutter_advanced_drawer.dart';
 import 'package:get/get.dart';
 import 'package:printore/views/shared/styles/colors.dart';
 import 'package:printore/views/shared/styles/styles.dart';
-import 'package:printore/views/shared/util/advanced_drawer.dart';
+
 import 'package:printore/views/shared/util/check_internet_connection.dart';
 import 'package:printore/views/shared/widgets/button_center_button.dart';
 import 'package:printore/views/shared/widgets/user_navigation_drawer.dart';
@@ -29,6 +29,11 @@ class MyAddress extends StatelessWidget {
   }
 
   User? user = FirebaseAuth.instance.currentUser;
+  final _advancedDrawerController = AdvancedDrawerController();
+  void _handleMenuButtonPressed() {
+    _advancedDrawerController.showDrawer();
+  }
+
   @override
   Widget build(BuildContext context) {
     CheckInternetConnection.CheckUserConnection(context: context);
@@ -38,7 +43,7 @@ class MyAddress extends StatelessWidget {
             textDirection: TextDirection.rtl,
             child: AdvancedDrawer(
                 backdropColor: const Color.fromARGB(255, 236, 239, 241),
-                controller: AdvancedDrawerClass.advancedDrawerController,
+                controller: _advancedDrawerController,
                 animationCurve: Curves.easeInOut,
                 animationDuration: const Duration(milliseconds: 80),
                 animateChildDecoration: true,
@@ -55,10 +60,9 @@ class MyAddress extends StatelessWidget {
                     title: Styles.appBarText('عناويني', context),
                     centerTitle: true,
                     leading: IconButton(
-                      onPressed: AdvancedDrawerClass.handleMenuButtonPressed,
+                      onPressed: _handleMenuButtonPressed,
                       icon: ValueListenableBuilder<AdvancedDrawerValue>(
-                        valueListenable:
-                            AdvancedDrawerClass.advancedDrawerController,
+                        valueListenable: _advancedDrawerController,
                         builder: (_, value, __) {
                           return AnimatedSwitcher(
                             duration: const Duration(milliseconds: 250),

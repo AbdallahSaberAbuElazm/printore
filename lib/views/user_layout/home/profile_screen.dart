@@ -34,7 +34,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final _lNameController = TextEditingController();
   final _phoneController = TextEditingController();
   final userController = Get.find<UserController>();
-  final _formKey = GlobalKey<FormState>();
+  final _formKeyUserInfo = GlobalKey<FormState>();
+  final _formKeyUpdateEmail = GlobalKey<FormState>();
+  final _formKeyUpdatePassword = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -246,107 +248,122 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _expandedUserInfo({required BuildContext context}) {
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            SizedBox(
-              width: MediaQuery.of(context).size.width / 2.7,
-              child: TextFormFieldController(
-                  controller: _fNameController,
-                  isEnabled: true,
-                  name: 'الإسم الأول',
-                  type: TextInputType.name),
-            ),
-            SizedBox(
-              width: MediaQuery.of(context).size.width / 2.7,
-              child: TextFormFieldController(
-                  controller: _lNameController,
-                  isEnabled: true,
-                  name: 'الإسم الأخير',
-                  type: TextInputType.name),
-            ),
-          ],
-        ),
-        TextFormFieldController(
-            controller: _phoneController,
-            isEnabled: true,
-            name: 'رقم الهاتف',
-            type: TextInputType.phone),
-        _btnUpdateData(
-            context: context,
-            onTap: () {
-              userController.updateUserInfo(
-                  fName: _fNameController.text,
-                  lName: _lNameController.text,
-                  phoneNum: _phoneController.text);
-              setState(() {
-                _fNameController.text =
-                    UserSharedPreferences.getUserFirstName().toString();
-                _lNameController.text =
-                    UserSharedPreferences.getUserLastName().toString();
-                _phoneController.text =
-                    UserSharedPreferences.getUserPhoneNumber().toString();
-              });
-            }),
-      ],
+    return Form(
+      key: _formKeyUserInfo,
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              SizedBox(
+                width: MediaQuery.of(context).size.width / 2.7,
+                child: TextFormFieldController(
+                    controller: _fNameController,
+                    isEnabled: true,
+                    name: 'الإسم الأول',
+                    type: TextInputType.name),
+              ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width / 2.7,
+                child: TextFormFieldController(
+                    controller: _lNameController,
+                    isEnabled: true,
+                    name: 'الإسم الأخير',
+                    type: TextInputType.name),
+              ),
+            ],
+          ),
+          TextFormFieldController(
+              controller: _phoneController,
+              isEnabled: true,
+              name: 'رقم الهاتف',
+              type: TextInputType.phone),
+          _btnUpdateData(
+              context: context,
+              onTap: () {
+                if (_formKeyUserInfo.currentState!.validate()) {
+                  userController.updateUserInfo(
+                      fName: _fNameController.text,
+                      lName: _lNameController.text,
+                      phoneNum: _phoneController.text);
+                  setState(() {
+                    _fNameController.text =
+                        UserSharedPreferences.getUserFirstName().toString();
+                    _lNameController.text =
+                        UserSharedPreferences.getUserLastName().toString();
+                    _phoneController.text =
+                        UserSharedPreferences.getUserPhoneNumber().toString();
+                  });
+                }
+              }),
+        ],
+      ),
     );
   }
 
   Widget _expandedUpdateEmail({required BuildContext context}) {
-    return Column(children: [
-      TextFormFieldController(
-          name: 'البريد الإلكتروني الحالي',
-          type: TextInputType.emailAddress,
-          controller: _currentEmailController,
-          isEnabled: false),
-      TextFormFieldController(
-          name: 'البريد الإلكتروني الجديد',
-          type: TextInputType.emailAddress,
-          controller: _updateEmailController,
-          isEnabled: true),
-      PasswordFormField(
-        controller: _signInPasswordController,
-        hintText: 'كلمة المرور',
-      ),
-      _btnUpdateData(
-          context: context,
-          onTap: () {
-            userController.updateEmail(
-                newEmail: _updateEmailController.text,
-                password: _signInPasswordController.text);
-          }),
-    ]);
-  }
-
-  Widget _expandedUpdatePassword({required BuildContext context}) {
-    return Column(
-      children: [
+    return Form(
+      key: _formKeyUpdateEmail,
+      child: Column(children: [
+        TextFormFieldController(
+            name: 'البريد الإلكتروني الحالي',
+            type: TextInputType.emailAddress,
+            controller: _currentEmailController,
+            isEnabled: false),
+        TextFormFieldController(
+            name: 'البريد الإلكتروني الجديد',
+            type: TextInputType.emailAddress,
+            controller: _updateEmailController,
+            isEnabled: true),
         PasswordFormField(
-          controller: _currentPasswordController,
-          hintText: 'كلمة المرور الحالية',
-        ),
-        PasswordFormField(
-          controller: _newPasswordController,
-          hintText: 'كلمة المرور الجديدة',
-        ),
-        PasswordFormField(
-          controller: _confirmNewPasswordController,
-          hintText: 'تأكيد كلمة المرور',
+          controller: _signInPasswordController,
+          hintText: 'كلمة المرور',
         ),
         _btnUpdateData(
             context: context,
             onTap: () {
-              userController.changePassword(
-                  currentPassword: _currentPasswordController.text,
-                  newPassword: _newPasswordController.text,
-                  context: context);
-              _currentEmailController.text = '';
-              _newPasswordController.text = '';
-              _confirmNewPasswordController.text = '';
+              if (_formKeyUpdateEmail.currentState!.validate()) {
+                userController.updateEmail(
+                    newEmail: _updateEmailController.text,
+                    password: _signInPasswordController.text);
+              }
             }),
-      ],
+      ]),
+    );
+  }
+
+  Widget _expandedUpdatePassword({required BuildContext context}) {
+    return Form(
+      key: _formKeyUpdatePassword,
+      child: Column(
+        children: [
+          PasswordFormField(
+            controller: _currentPasswordController,
+            hintText: 'كلمة المرور الحالية',
+          ),
+          PasswordFormField(
+            controller: _newPasswordController,
+            hintText: 'كلمة المرور الجديدة',
+          ),
+          PasswordFormField(
+            controller: _confirmNewPasswordController,
+            hintText: 'تأكيد كلمة المرور',
+          ),
+          _btnUpdateData(
+              context: context,
+              onTap: () {
+                if (_formKeyUpdatePassword.currentState!.validate()) {
+                  userController.changePassword(
+                      currentPassword: _currentPasswordController.text,
+                      newPassword: _newPasswordController.text,
+                      context: context);
+                  _currentEmailController.text = '';
+                  _newPasswordController.text = '';
+                  _confirmNewPasswordController.text = '';
+                }
+              }),
+        ],
+      ),
     );
   }
 

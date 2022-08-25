@@ -43,7 +43,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   const SizedBox(
                     height: 70,
                   ),
-                  Styles.logo(),
+                  Styles.logo(width: 70, height: 60),
                   const SizedBox(
                     height: 40,
                   ),

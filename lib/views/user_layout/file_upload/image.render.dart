@@ -17,7 +17,12 @@ class ImageRender extends StatelessWidget {
             loadingBuilder: (context, child, loadingProgress) {
           return loadingProgress == null
               ? child
-              : CircularProgressIndicator(color: MainColor.darkGreyColor);
+              : Center(
+                  child: CircularProgressIndicator(
+                    color: MainColor.darkGreyColor,
+                    backgroundColor: Colors.grey,
+                  ),
+                );
         }));
   }
 }

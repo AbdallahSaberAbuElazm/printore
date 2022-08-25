@@ -2,17 +2,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:printore/controller/cart_controller.dart';
+
 import 'package:printore/controller/layout_controller.dart';
 import 'package:printore/controller/paper_type_controller.dart';
 import 'package:printore/controller/size_controller.dart';
 import 'package:printore/controller/wrapping_controller.dart';
-import 'package:printore/model/product/file_model.dart';
+
 import 'package:printore/model/product/option/option.dart';
 import 'package:printore/provider/option_provider.dart';
 import 'package:printore/views/shared/styles/colors.dart';
 import 'package:printore/views/shared/styles/styles.dart';
-import 'package:printore/views/shared/util/user_shared_preferences.dart';
 import 'package:printore/views/user_layout/cart/cart_screen.dart';
 import 'package:printore/views/user_layout/option/draw_color_selected.dart';
 import 'package:printore/views/user_layout/option/draw_paper_option.dart';
@@ -22,7 +21,7 @@ import 'package:provider/provider.dart';
 
 class DrawOptionCard extends StatefulWidget {
   final String? fileId;
-  final FileModel fileModel;
+  final fileModel;
   final statusFile;
   const DrawOptionCard(
       {Key? key,
@@ -112,7 +111,9 @@ class _DrawOptionCardState extends State<DrawOptionCard> {
                 optionPaperType: option!.paperTypeSelected,
                 optionSide: option!.sideSelected,
                 optionWrapping: option!.wrappingSelected,
-                optionNote: _noteController.text,
+                optionNote: (_noteController.text.isNotEmpty)
+                    ? _noteController.text
+                    : widget.fileModel.optionNote,
                 optionColor: option!.colorSelected);
             // Product product = Product(
             //     file: widget.fileModel, option: optionModel, noOfCopies: 1);
@@ -131,15 +132,16 @@ class _DrawOptionCardState extends State<DrawOptionCard> {
                     .collection('users')
                     .doc(user!.uid)
                     .collection('carts')
-                    .add(productMap)
+                    .doc(widget.fileModel.fileId)
+                    .update(productMap)
                 : await FirebaseFirestore.instance
                     .collection('users')
                     .doc(user!.uid)
                     .collection('carts')
-                    .doc(widget.fileId.toString())
-                    .update(productMap);
+                    .doc(widget.fileId)
+                    .set(productMap);
 
-            if (!widget.statusFile) {
+            if (!widget.statusFile == false) {
               await FirebaseFirestore.instance
                   .collection('users')
                   .doc(user.uid)

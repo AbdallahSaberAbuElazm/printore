@@ -55,7 +55,7 @@ class _RegisterState extends State<Register> {
                       height: 25,
                     ),
                     // ignore: sized_box_for_whitespace
-                    Styles.logo(),
+                    Styles.logo(width: 70, height: 60),
                     const SizedBox(
                       height: 7,
                     ),

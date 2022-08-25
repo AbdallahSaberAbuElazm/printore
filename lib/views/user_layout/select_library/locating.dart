@@ -320,7 +320,7 @@ class _LocatingState extends State<Locating> {
               onTap: () {
                 setState(() {
                   indexSelected = 1;
-                  Get.to(const DrawMapPrintOffice());
+                  Get.to(DrawMapPrintOffice());
                 });
               },
               child: Column(
