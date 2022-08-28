@@ -4,7 +4,7 @@ import 'package:printore/services/firestore_db.dart';
 
 class PaperTypeController extends GetxController {
   final list = <PaperType>[].obs;
-  RxString optionNameSelected = 'عادي'.obs;
+  RxString optionNameSelected = '70 جم'.obs;
 
   @override
   void onInit() {

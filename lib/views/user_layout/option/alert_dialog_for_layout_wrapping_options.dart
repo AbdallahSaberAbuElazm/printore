@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:printore/provider/option_provider.dart';
 
 // ignore: must_be_immutable
-class AlertDialogForOptions extends StatelessWidget {
+class AlertDialogForOptionsLayoutsWrapping extends StatelessWidget {
   final String optionSelected;
   final dynamic updateOption;
   final String optionName;
@@ -13,7 +13,7 @@ class AlertDialogForOptions extends StatelessWidget {
   final controller;
   final String fileNameFirebase;
 
-  AlertDialogForOptions({
+  AlertDialogForOptionsLayoutsWrapping({
     Key? key,
     required this.optionName,
     required this.optionSelected,
@@ -59,38 +59,28 @@ class AlertDialogForOptions extends StatelessWidget {
                         selected = controller.list[index].optionName;
                       },
                       child: Container(
-                          width: 70,
-                          height: 70,
-                          margin: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                              image: const DecorationImage(
-                                  image: AssetImage(
-                                      'assets/images/paperDesign.png'),
-                                  fit: BoxFit.fill),
-                              border: Border.all(
-                                  width: (selected ==
-                                          controller.list[index].optionName)
-                                      ? 3
-                                      : 2,
-                                  color: (selected ==
-                                          controller.list[index].optionName)
-                                      ? MainColor.yellowColor
-                                      : Colors.grey),
-                              color: Colors.white,
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(12))),
-                          child: Center(
-                            child: Text(
-                              controller.list[index].optionName,
-                              style: (optionSelected ==
-                                      controller.list[index].optionName)
-                                  ? Theme.of(context).textTheme.headline3
-                                  : const TextStyle(
-                                      color: Colors.grey,
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.w600),
-                            ),
-                          )));
+                        width: 70,
+                        height: 70,
+                        margin: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                            image: DecorationImage(
+                                image: NetworkImage(
+                                  '${controller.list[index].downloadUrl}',
+                                ),
+                                fit: BoxFit.fill),
+                            border: Border.all(
+                                width: (controller.optionNameSelected.value ==
+                                        controller.list[index].optionName)
+                                    ? 3
+                                    : 1.5,
+                                color: (controller.optionNameSelected.value ==
+                                        controller.list[index].optionName)
+                                    ? MainColor.yellowColor
+                                    : Colors.grey),
+                            color: Colors.white,
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(6))),
+                      ));
                 }),
               ),
             ),

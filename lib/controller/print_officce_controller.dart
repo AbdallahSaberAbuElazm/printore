@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:printore/model/service_providers/print_office.dart';
 import 'package:printore/model/service_providers/working_hours.dart';
@@ -9,7 +10,11 @@ class PrintOfficeController extends GetxController {
   final listWorkingHours = <WorkingHours>[].obs;
   final office = ''.obs;
   final governorate = ''.obs;
+  final governorateIndex = 0.obs;
   final city = ''.obs;
+  final cityIndex = 0.obs;
+  final cityLatitude = 0.0.obs;
+  final cityLangitude = 0.0.obs;
   final printOffice = <PrintOffice>[].obs;
   final searchOnPrintOffice = <UserService>[].obs;
 
@@ -22,6 +27,11 @@ class PrintOfficeController extends GetxController {
     list.clear();
     list.bindStream(
         FirestoreDB().getPrintOffices(governorate: governorate, city: city));
+    update();
+  }
+
+  updateListOfPrintOffice({required PrintOffice printOffice}) {
+    list.add(printOffice);
     update();
   }
 
@@ -118,13 +128,21 @@ class PrintOfficeController extends GetxController {
         .makeUserAsPrintOfficer(printOfficeId: printOfficeId, value: value);
   }
 
-  updateGovernorate(String governorate) {
+  updateGovernorate(String governorate, int index) {
     this.governorate.value = governorate;
+    this.governorateIndex.value = index;
     update();
   }
 
-  updateCity(String city) {
+  updateCity(String city, int index) {
     this.city.value = city;
+    this.cityIndex.value = index;
+    update();
+  }
+
+  updateCityLocation({required double latitude, required double langitude}) {
+    this.cityLatitude.value = latitude;
+    this.cityLangitude.value = langitude;
     update();
   }
 }

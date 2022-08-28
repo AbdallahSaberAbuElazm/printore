@@ -8,6 +8,8 @@ class PrintOffice {
   double? printOfficeRating;
   String? city;
   String? governorate;
+  double? latitude;
+  double? longitude;
   bool? status = false;
 
   PrintOffice(
@@ -18,7 +20,9 @@ class PrintOffice {
       required this.printOfficeRating,
       required this.city,
       required this.governorate,
-      required this.status});
+      required this.status,
+      required this.latitude,
+      required this.longitude});
 
   static PrintOffice fromSnapShot(DocumentSnapshot snapshot) {
     return PrintOffice(
@@ -29,7 +33,9 @@ class PrintOffice {
         printOfficeRating: snapshot['rating'].toDouble(),
         city: snapshot['city'],
         governorate: snapshot['governorate'],
-        status: snapshot['status']);
+        status: snapshot['status'],
+        latitude: snapshot['latitude'],
+        longitude: snapshot['langitude']);
   }
 
   Map<String, dynamic> toMap() {

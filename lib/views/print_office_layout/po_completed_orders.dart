@@ -130,7 +130,7 @@ class _PrintOfficeCompletedOrdersState
                               width: 2,
                             ),
                             Text(
-                              '${orderController.completedOrderList[index].cartIds.length} ملف',
+                              '${orderController.completedOrderList[index].cartIds!.length} ملف',
                               style: TextStyle(
                                   color: MainColor.darkGreyColor,
                                   fontSize: 13,

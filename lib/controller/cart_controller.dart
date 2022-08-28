@@ -7,6 +7,7 @@ class CartController extends GetxController {
   final cart = <Cart>[].obs;
   final _products = {}.obs;
   final price = 0.0.obs;
+  final priceCart = 0.0.obs;
 
   @override
   void onInit() {
@@ -26,6 +27,14 @@ class CartController extends GetxController {
 
   updateQuantity(int index, int quantity) {
     cart[index].noOfCopies = quantity;
+    update();
+  }
+
+  getAllPriceOffCart() {
+    priceCart.value = 0.0;
+    for (var cartData in cart) {
+      priceCart.value += cartData.totalPrice!;
+    }
     update();
   }
 
@@ -53,5 +62,29 @@ class CartController extends GetxController {
     } else {
       _products[product] -= 1;
     }
+  }
+
+  double calculateFilePrice(
+      {required int numOfPages,
+      required int numOfCopies,
+      required double paperPrice,
+      required int layoutNumOfPages,
+      required double layoutPrice,
+      required double wrappingPrice,
+      required int side,
+      required double priceSide}) {
+    int numOfPapers =
+        ((numOfCopies * numOfPages) / (layoutNumOfPages * side)).ceil();
+
+    double priceOfLayout = (numOfPages > 1) ? (numOfPapers * layoutPrice) : 0;
+    double pricePaperWithSide =
+        (numOfPages > 1) ? (numOfPapers * priceSide) : 0;
+
+    // print('data is ${(7 * 3 / 2).round()}');
+
+    return (numOfPapers * paperPrice) +
+        priceOfLayout * side +
+        pricePaperWithSide +
+        wrappingPrice;
   }
 }

@@ -5,8 +5,8 @@ import 'package:printore/services/firestore_db.dart';
 
 class OrderController extends GetxController {
   final order = <Order>[].obs;
-  final completedOrderList = [].obs;
-  // final connectionList = <ConnectModel>[].obs;
+  final completedOrderList = <Order>[].obs;
+  final userOrderList = <Order>[].obs;
   final cartOrder = <Cart>[].obs;
   final noOfFileQrCode = 0.0.obs;
 
@@ -15,6 +15,7 @@ class OrderController extends GetxController {
     order.bindStream(FirestoreDB().getPrintOfficerOrders());
     completedOrderList
         .bindStream(FirestoreDB().getPrintOfficerCompletedOrders());
+    userOrderList.bindStream(FirestoreDB().getUserOrders());
     super.onInit();
   }
 
@@ -38,11 +39,15 @@ class OrderController extends GetxController {
     for (int i = 0; i < completedOrderList.length; i++) {
       if (barcode == completedOrderList[i].qrCode) {
         noOfFileQrCode.value +=
-            int.parse(completedOrderList[i].cartIds.length.toString());
+            int.parse(completedOrderList[i].cartIds!.length.toString());
         x++;
+        completedOrderList[i].isDeliverd = true;
 
         FirestoreDB().updateDeliverdOrders(
-            barcode: barcode, orderId: completedOrderList[i].orderId);
+            barcode: barcode,
+            orderId: completedOrderList[i].orderId.toString(),
+            customerId: completedOrderList[i].customerId.toString(),
+            toMap: completedOrderList[i].toMap());
         // update();
       }
     }

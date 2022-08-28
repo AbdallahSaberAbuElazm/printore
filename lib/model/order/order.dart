@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class Order {
   String? orderId;
   String? printOfficeId;
+  String? printOfficeName;
   String? customerId;
   List<String>? cartIds;
   double? deliveryFee;
@@ -26,25 +27,26 @@ class Order {
       required this.isCancelled,
       required this.isDeliverd,
       required this.qrCode,
-      required this.createdAt});
+      required this.createdAt,
+      required this.printOfficeName});
 
   static Order fromDocumentSnapshot(DocumentSnapshot snapshot) {
     return Order(
-      orderId: snapshot.id,
-      customerId: snapshot['customerId'],
-      printOfficeId: snapshot['printOfficeId'],
-      cartIds: List<String>.from(
-        snapshot['cartIds'],
-      ),
-      deliveryFee: snapshot['deliveryFee'],
-      total: snapshot['total'],
-      subTotal: snapshot['subTotal'],
-      isAccepted: snapshot['isAccepted'],
-      isDeliverd: snapshot['isDeliverd'],
-      isCancelled: snapshot['isCancelled'],
-      qrCode: snapshot['qrCode'],
-      createdAt: snapshot['createdAt'],
-    );
+        orderId: snapshot.id,
+        customerId: snapshot['customerId'],
+        printOfficeId: snapshot['printOfficeId'],
+        cartIds: List<String>.from(
+          snapshot['cartIds'],
+        ),
+        deliveryFee: snapshot['deliveryFee'],
+        total: snapshot['total'],
+        subTotal: snapshot['subTotal'],
+        isAccepted: snapshot['isAccepted'],
+        isDeliverd: snapshot['isDeliverd'],
+        isCancelled: snapshot['isCancelled'],
+        qrCode: snapshot['qrCode'],
+        createdAt: snapshot['createdAt'],
+        printOfficeName: snapshot['printOfficeName']);
   }
 
   Order copyWith({
@@ -73,7 +75,8 @@ class Order {
         isCancelled: isCancelled ?? this.isCancelled,
         isDeliverd: isDeliverd ?? this.isAccepted,
         qrCode: qrCode ?? this.qrCode,
-        createdAt: createdAt ?? this.createdAt);
+        createdAt: createdAt ?? this.createdAt,
+        printOfficeName: printOfficeName ?? this.printOfficeName);
   }
 
   Map<String, dynamic> toMap() {
@@ -89,6 +92,7 @@ class Order {
       'isDeliverd': isDeliverd,
       'qrCode': qrCode,
       'createdAt': createdAt,
+      'printOfficeName': printOfficeName
     };
   }
 }

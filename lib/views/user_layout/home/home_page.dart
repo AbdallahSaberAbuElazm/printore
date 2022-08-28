@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_advanced_drawer/flutter_advanced_drawer.dart';
+import 'package:get/get.dart';
+import 'package:printore/controller/order_controller.dart';
 import 'package:printore/provider/option_provider.dart';
 import 'package:printore/views/shared/styles/colors.dart';
 import 'package:printore/views/shared/styles/styles.dart';
@@ -15,8 +17,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int prints = 0;
   OptionProvider? option;
+  final OrderController _orderController = Get.find();
 
   Future<bool> _onWillPop() async {
     return (await Utils.showDialogOnWillPop(context: context)) ?? false;
@@ -135,7 +137,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _drawListPrint({required BuildContext context}) {
-    return (prints > 0)
+    return (_orderController.userOrderList.length > 0)
         ? _drawContainerOrders(context: context)
         : Padding(
             padding: const EdgeInsets.only(top: 140),
@@ -170,155 +172,168 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'مطبوعاتي اّخر $prints  طلبات',
-                  style: Theme.of(context).textTheme.bodyText1,
+                Obx(
+                  () => Text(
+                    'مطبوعاتي اّخر ${_orderController.userOrderList.length} طلبات',
+                    style: Theme.of(context).textTheme.bodyText1,
+                  ),
                 ),
               ]),
         ),
         Container(
             padding: const EdgeInsets.only(bottom: 90),
             height: 500,
-            child: ListView.builder(
-                itemCount: prints,
-                itemBuilder: (context, index) {
-                  return Transform.translate(
-                    offset: const Offset(0, -20),
-                    child: Stack(children: [
-                      Container(
-                        margin: const EdgeInsets.only(
-                            left: 12, right: 12, bottom: 39),
-                        height: 130,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(6)),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.1),
-                              spreadRadius: 8,
-                              blurRadius: 6,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                            top: 20,
+            child: Obx(
+              () => ListView.builder(
+                  itemCount: _orderController.userOrderList.length,
+                  itemBuilder: (context, index) {
+                    return Transform.translate(
+                      offset: const Offset(0, -20),
+                      child: Stack(children: [
+                        Container(
+                          margin: const EdgeInsets.only(
+                              left: 12, right: 12, bottom: 39),
+                          height: 130,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(6)),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.1),
+                                spreadRadius: 8,
+                                blurRadius: 6,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
                           ),
-                          child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                _drawListTile(
-                                    icon: Icons.print_outlined,
-                                    title: 'مكتبة حسونه'),
-                                Padding(
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                              top: 20,
+                            ),
+                            child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Obx(
+                                    () => _drawListTile(
+                                        icon: Icons.print_outlined,
+                                        title: _orderController
+                                            .userOrderList[index]
+                                            .printOfficeName
+                                            .toString()),
+                                  ),
+                                  Padding(
+                                      padding: const EdgeInsets.only(left: 19),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          _drawListTile(
+                                              icon: Icons.date_range_outlined,
+                                              title: Styles.formattedDate),
+                                          // Text(
+                                          //   '1111111',
+                                          //   style: TextStyle(
+                                          //       color: MainColor.darkGreyColor,
+                                          //       fontSize: 15,
+                                          //       fontWeight: FontWeight.w700),
+                                          // ),
+                                        ],
+                                      )),
+                                  Padding(
                                     padding: const EdgeInsets.only(left: 19),
                                     child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
-                                        _drawListTile(
-                                            icon: Icons.date_range_outlined,
-                                            title: Styles.formattedDate),
-                                        Text(
-                                          '1111111',
-                                          style: TextStyle(
-                                              color: MainColor.darkGreyColor,
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.w700),
+                                        Obx(
+                                          () => _drawListTile(
+                                              icon: Icons.file_upload,
+                                              title:
+                                                  '${_orderController.userOrderList[index].cartIds!.length} ملفات'),
                                         ),
+                                        // Text(
+                                        //   'رقم الطلب',
+                                        //   style: Styles.detailTheme,
+                                        // )
                                       ],
-                                    )),
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 19),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      _drawListTile(
-                                          icon: Icons.file_upload,
-                                          title: 'ملفات'),
-                                      Text(
-                                        'رقم الطلب',
-                                        style: Styles.detailTheme,
-                                      )
-                                    ],
+                                    ),
                                   ),
-                                ),
-                              ]),
+                                ]),
+                          ),
                         ),
-                      ),
-                      Transform.translate(
-                          offset: const Offset(0, -39),
-                          child: Padding(
-                            padding: const EdgeInsets.only(right: 10, left: 10),
-                            child: Row(
-                              children: [
-                                Container(
-                                  margin:
-                                      const EdgeInsets.only(left: 7, right: 24),
-                                  padding: const EdgeInsets.only(
-                                      left: 11, right: 11),
-                                  decoration: BoxDecoration(
-                                      borderRadius: const BorderRadius.all(
-                                          Radius.circular(6)),
-                                      color: MainColor.yellowColor),
-                                  child: Text(
-                                    'تم الإستلام',
-                                    style:
-                                        Theme.of(context).textTheme.bodyText1,
+                        Transform.translate(
+                            offset: const Offset(0, -39),
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.only(right: 10, left: 10),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    margin: const EdgeInsets.only(
+                                        left: 7, right: 24),
+                                    padding: const EdgeInsets.only(
+                                        left: 11, right: 11),
+                                    decoration: BoxDecoration(
+                                        borderRadius: const BorderRadius.all(
+                                            Radius.circular(6)),
+                                        color: MainColor.yellowColor),
+                                    child: Text(
+                                      'تم الإستلام',
+                                      style:
+                                          Theme.of(context).textTheme.bodyText1,
+                                    ),
                                   ),
-                                ),
-                                Container(
-                                  margin: const EdgeInsets.only(left: 7),
-                                  padding: const EdgeInsets.only(
-                                      left: 11, right: 11),
-                                  decoration: BoxDecoration(
-                                      borderRadius: const BorderRadius.all(
-                                          Radius.circular(6)),
-                                      color: MainColor.yellowColor),
-                                  child: Text(
-                                    'الإستلام من الفرع',
-                                    style:
-                                        Theme.of(context).textTheme.bodyText1,
+                                  Container(
+                                    margin: const EdgeInsets.only(left: 7),
+                                    padding: const EdgeInsets.only(
+                                        left: 11, right: 11),
+                                    decoration: BoxDecoration(
+                                        borderRadius: const BorderRadius.all(
+                                            Radius.circular(6)),
+                                        color: MainColor.yellowColor),
+                                    child: Text(
+                                      'الإستلام من الفرع',
+                                      style:
+                                          Theme.of(context).textTheme.bodyText1,
+                                    ),
                                   ),
-                                ),
-                                Container(
-                                  width: 80,
-                                  height: 80,
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color:
-                                              Theme.of(context).backgroundColor,
-                                          width: 4),
-                                      color: const Color(0xffffffff),
-                                      shape: BoxShape.circle),
-                                  child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Text('1.50',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .headline3),
-                                        Text('جنيه',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .headline6),
-                                      ]),
-                                ),
-                              ],
-                            ),
-                          )),
-                    ]),
-                  );
-                }))
+                                  Container(
+                                    width: 80,
+                                    height: 80,
+                                    decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: Theme.of(context)
+                                                .backgroundColor,
+                                            width: 4),
+                                        color: const Color(0xffffffff),
+                                        shape: BoxShape.circle),
+                                    child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Text('1.50',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .headline3),
+                                          Text('جنيه',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .headline6),
+                                        ]),
+                                  ),
+                                ],
+                              ),
+                            )),
+                      ]),
+                    );
+                  }),
+            ))
       ],
     );
   }

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_advanced_drawer/flutter_advanced_drawer.dart';
+import 'package:get/get.dart';
+import 'package:printore/controller/ticket_type_controller.dart';
 import 'package:printore/views/shared/styles/colors.dart';
 import 'package:printore/views/shared/styles/styles.dart';
 import 'package:printore/views/shared/util/check_internet_connection.dart';
 import 'package:printore/views/shared/widgets/user_navigation_drawer.dart';
-import 'package:printore/views/user_layout/who_are_we/complaint.dart';
+import 'package:printore/views/user_layout/who_are_we/ticket_screen.dart';
 
 class ContactUs extends StatefulWidget {
   const ContactUs({Key? key}) : super(key: key);
@@ -15,6 +17,12 @@ class ContactUs extends StatefulWidget {
 
 class _ContactUsState extends State<ContactUs> {
   final _advancedDrawerController = AdvancedDrawerController();
+  @override
+  void initState() {
+    super.initState();
+    Get.find<TicketTypeController>().getTicketTypes();
+  }
+
   void _handleMenuButtonPressed() {
     _advancedDrawerController.showDrawer();
   }
@@ -92,7 +100,7 @@ class _ContactUsState extends State<ContactUs> {
                               SizedBox(
                                 height: MediaQuery.of(context).size.height / 12,
                               ),
-                              _sendComplaint()
+                              _sendTicket()
                             ],
                           ),
                         ))))));
@@ -154,7 +162,7 @@ class _ContactUsState extends State<ContactUs> {
   }
 
   //send complaint
-  Widget _sendComplaint() {
+  Widget _sendTicket() {
     CheckInternetConnection.CheckUserConnection(context: context);
     return Center(
         child: Styles.loginButton(context, 'إرسال شكوي',

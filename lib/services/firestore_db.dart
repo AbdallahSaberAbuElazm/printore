@@ -11,6 +11,7 @@ import 'package:printore/model/location/country.dart';
 import 'package:printore/model/location/governorate.dart';
 import 'package:printore/model/order/order.dart';
 import 'package:printore/model/product/option/layout.dart';
+import 'package:printore/model/product/option/paper_price.dart';
 import 'package:printore/model/product/option/paper_type.dart';
 import 'package:printore/model/product/option/side.dart';
 import 'package:printore/model/product/option/size.dart';
@@ -18,6 +19,8 @@ import 'package:printore/model/product/option/wrapping.dart';
 import 'package:printore/model/review/review.dart';
 import 'package:printore/model/service_providers/print_office.dart';
 import 'package:printore/model/service_providers/working_hours.dart';
+import 'package:printore/model/ticket/ticket_type.dart';
+import 'package:printore/model/ticket/ticket.dart';
 import 'package:printore/model/user/user_service.dart';
 
 class FirestoreDB {
@@ -107,13 +110,8 @@ class FirestoreDB {
 
   //get list of side
   Stream<List<Side>> getSide() {
-    return _firebaseFirestore
-        .collection('sizes')
-        .doc(sizeController.optionNameSelected.value)
-        .collection('sides')
-        .snapshots()
-        .map((snapshot) =>
-            snapshot.docs.map((doc) => Side.fromSnapShot(doc)).toList());
+    return _firebaseFirestore.collection('sides').snapshots().map((snapshot) =>
+        snapshot.docs.map((doc) => Side.fromSnapShot(doc)).toList());
   }
 
   //get list of wrapping
@@ -406,6 +404,17 @@ class FirestoreDB {
             .toList());
   }
 
+  Stream<List<Order>> getUserOrders() {
+    return _firebaseFirestore
+        .collection('users')
+        .doc(user!.uid.toString().trimLeft().trimRight())
+        .collection('orders')
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+            .map((doc) => Order.fromDocumentSnapshot(doc))
+            .toList());
+  }
+
   setOrders({required Order order, required String printOfficeId}) async {
     final officeId = printOfficeId;
     await _firebaseFirestore
@@ -440,13 +449,71 @@ class FirestoreDB {
   }
 
   updateDeliverdOrders(
-      {required String barcode, required String orderId}) async {
+      {required String barcode,
+      required String orderId,
+      required String customerId,
+      required Map<String, dynamic> toMap}) async {
     await _firebaseFirestore
         .collection('users')
         .doc(user!.uid.toString().trimLeft().trimRight())
         .collection('checkout')
         .doc(orderId)
         .update({'isDeliverd': true});
+    await _firebaseFirestore
+        .collection('users')
+        .doc(customerId.toString().trimLeft().trimRight())
+        .collection('cart')
+        .where('ordered', isEqualTo: true)
+        .get()
+        .then((querySnapshot) => {
+              querySnapshot.docs.forEach((doc) => {doc.reference.delete()})
+            });
+    await _firebaseFirestore
+        .collection('users')
+        .doc(customerId.toString().trimLeft().trimRight())
+        .collection('orders')
+        .add(toMap);
+  }
+
+  Stream<List<PaperPrice>> getPaperPrice(
+      {required String paperSize,
+      required String paperType,
+      required String paperColor}) {
+    return _firebaseFirestore
+        .collection('paperPrice')
+        .doc(paperSize.toString())
+        .collection(paperType.toString())
+        .where('paperColor', isEqualTo: paperColor)
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+            .map((doc) => PaperPrice.fromDocumentSnapshot(doc))
+            .toList());
+  }
+
+  uploadReview({required Map<String, dynamic> toMap}) async {
+    await _firebaseFirestore.collection('reviews').add(toMap);
+  }
+
+  sendTicket({required Map<String, dynamic> toMap}) async {
+    await _firebaseFirestore.collection('tickets').add(toMap);
+  }
+
+  Stream<List<Ticket>> getTickets() {
+    return _firebaseFirestore.collection('tickets').snapshots().map(
+        (snapshot) => snapshot.docs
+            .map((doc) => Ticket.fromDocumentSnapshot(doc))
+            .toList());
+  }
+
+  Stream<List<TicketTypes>> getTicketTypes() {
+    return _firebaseFirestore.collection('ticketTypes').snapshots().map(
+        (snapshot) => snapshot.docs
+            .map((doc) => TicketTypes.fromDocumentSnapshot(doc))
+            .toList());
+  }
+
+  uploadTicketType({required Map<String, dynamic> toMap}) async {
+    await _firebaseFirestore.collection('ticketTypes').add(toMap);
   }
 
   // Stream<List<Review>> getAllReviews() {

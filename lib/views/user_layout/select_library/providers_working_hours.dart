@@ -11,7 +11,7 @@ class ProvidersWorkingHours extends StatelessWidget {
 
   final _style2 = TextStyle(
       color: MainColor.darkGreyColor,
-      fontSize: 11,
+      fontSize: 12,
       fontWeight: FontWeight.w500);
 
   final bool today = false;

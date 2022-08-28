@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:printore/provider/option_provider.dart';
 import 'package:printore/views/shared/styles/colors.dart';
 import 'package:provider/provider.dart';
+import 'package:printore/views/shared/util/util.dart';
 
 class DrawColorSelected extends StatefulWidget {
   const DrawColorSelected({Key? key}) : super(key: key);
@@ -48,12 +49,14 @@ class _DrawColorSelectedState extends State<DrawColorSelected> {
                   scrollDirection: Axis.horizontal,
                   itemCount: colors.length,
                   itemBuilder: (context, index) {
+                    Utils.getPaperPrice(context: context);
                     return InkWell(
                       onTap: () {
                         setState(() {
                           colorSelected = colors[index];
                         });
                         option.updateColor(colors[index]);
+                        Utils.getPaperPrice(context: context);
                       },
                       child: Container(
                           margin: const EdgeInsets.only(

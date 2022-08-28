@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:printore/provider/option_provider.dart';
 import 'package:printore/views/shared/styles/colors.dart';
-import 'package:printore/views/user_layout/option/alert_dialog_for_size_paper_type_options.dart';
+import 'package:printore/views/user_layout/option/alert_dialog_for_layout_wrapping_options.dart';
 import 'package:provider/provider.dart';
 
 class DrawPaperOption extends StatefulWidget {
@@ -30,6 +30,15 @@ class DrawPaperOption extends StatefulWidget {
 class _DrawPaperOptionState extends State<DrawPaperOption> {
   // ignore: prefer_typing_uninitialized_variables
   var option;
+
+  @override
+  void initState() {
+    if (widget.optionName == 'تخطييط') {
+      widget.controller
+          .updateNoOfPagesInLayout(widget.controller.list[0].layoutNumber);
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +85,8 @@ class _DrawPaperOptionState extends State<DrawPaperOption> {
                           onPressed: () {
                             showDialog(
                                 context: context,
-                                builder: (context) => AlertDialogForOptions(
+                                builder: (context) =>
+                                    AlertDialogForOptionsLayoutsWrapping(
                                       controller: widget.controller,
                                       // streamData: widget.streamData,
                                       updateOption: widget.updateOption,
@@ -116,6 +126,16 @@ class _DrawPaperOptionState extends State<DrawPaperOption> {
                                           widget.controller.updateOptionName(
                                               widget.controller.list[index]
                                                   .optionName);
+                                          widget.controller.updateOptionPrice(
+                                              widget.controller.list[index]
+                                                  .price);
+                                          if (widget.optionName == 'تخطييط') {
+                                            widget.controller
+                                                .updateNoOfPagesInLayout(widget
+                                                    .controller
+                                                    .list[index]
+                                                    .layoutNumber);
+                                          }
                                         },
                                         child: Container(
                                           margin: const EdgeInsets.only(

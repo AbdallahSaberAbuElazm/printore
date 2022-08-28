@@ -38,7 +38,7 @@ class _RatingBuilderState extends State<RatingBuilder> {
               ),
           onRatingUpdate: (rating) {
             setState(() {
-              _ratingController.newRating.value = rating;
+              _ratingController.updateNewRating(rating);
             });
           }),
     );

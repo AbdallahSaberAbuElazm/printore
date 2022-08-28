@@ -44,7 +44,10 @@ class CartScreen extends StatelessWidget {
             ),
             bottomSheet: BottomCenterButton(
               buttonTitle: 'الدفع',
-              onPressed: () => Get.to(() => const Locating()),
+              onPressed: () {
+                _cartController.getAllPriceOffCart();
+                Get.to(() => const Locating());
+              },
               actionRelated: true,
             ),
             floatingActionButtonLocation:
@@ -60,10 +63,10 @@ class CartScreen extends StatelessWidget {
                       shape: const BeveledRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(6)),
                       ),
-                      onPressed: () => Get.off(Home(
-                        recentPage: const UploadPage(),
-                        selectedIndex: 2,
-                      )),
+                      onPressed: () => Get.off(() => Home(
+                            recentPage: const UploadPage(),
+                            selectedIndex: 2,
+                          )),
                       tooltip: "تحميل ملف",
                       child: Center(
                         child: Icon(
@@ -90,7 +93,7 @@ class CartScreen extends StatelessWidget {
                         return CartItems(
                           index: index,
                           summary: false,
-                          map: _cartController.cart,
+                          // map: _cartController.cart,
                         );
                       }),
                 )))));

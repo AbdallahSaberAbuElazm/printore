@@ -10,6 +10,7 @@ import 'package:printore/views/shared/util/user_shared_preferences.dart';
 import 'package:printore/views/user_layout/home/home.dart';
 import 'package:printore/views/user_layout/home/home_page.dart';
 import 'package:printore/views/user_layout/onboarding_page.dart';
+import 'package:printore/controller/order_controller.dart';
 
 class CheckAuth extends StatefulWidget {
   const CheckAuth({Key? key}) : super(key: key);
@@ -29,6 +30,9 @@ class _CheckAuthState extends State<CheckAuth> {
   @override
   void initState() {
     getValidationData().whenComplete(() async {
+      if (finalEmail != null) {
+        Get.find<OrderController>();
+      }
       Timer(
           const Duration(seconds: 2),
           () => Get.off(

@@ -1,22 +1,28 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Review {
+  String? userId;
   String? rating;
-  String? improvements;
+  List? improvements;
   String? opinions;
 
-  Review({required this.rating, required this.improvements, this.opinions});
+  Review(
+      {required this.userId,
+      required this.rating,
+      required this.improvements,
+      this.opinions});
 
   static Review fromSnapShot(DocumentSnapshot snapshot) {
-    Review review = Review(
+    return Review(
         rating: snapshot['rating'],
-        improvements: snapshot['improvements'],
-        opinions: snapshot['opinions']);
-    return review;
+        improvements: List<String>.from(snapshot['improvements']),
+        opinions: snapshot['opinions'],
+        userId: snapshot['useId']);
   }
 
   Map<String, dynamic> toMap() {
     return {
+      'userId': userId,
       'rating': rating,
       'improvements': improvements,
       'opinions': opinions

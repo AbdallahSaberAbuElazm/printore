@@ -112,7 +112,7 @@ class _AlertDialogAddressState extends State<AlertDialogAddress> {
                           widget.controller.text =
                               filteredLocation[index].locationNameAr!;
                           widget.saveLocation(
-                              filteredLocation[index].locationNameEn!);
+                              filteredLocation[index].locationNameEn!, index);
                         },
                         child: Padding(
                           padding: const EdgeInsets.only(top: 6, bottom: 6),

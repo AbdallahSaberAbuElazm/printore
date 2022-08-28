@@ -1,10 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:printore/provider/option_provider.dart';
 import 'package:printore/views/shared/styles/colors.dart';
 import 'package:printore/views/user_layout/option/alert_dialog_for_size_paper_type_options.dart';
 import 'package:provider/provider.dart';
+import 'package:printore/views/shared/util/util.dart';
 
 class DrawSizePaperType extends StatefulWidget {
   final String optionSelected;
@@ -32,6 +32,11 @@ class DrawSizePaperType extends StatefulWidget {
 class _DrawSizePaperTypeState extends State<DrawSizePaperType> {
   // ignore: prefer_typing_uninitialized_variables
   var option;
+  @override
+  void initState() {
+    widget.controller.updateOptionName(widget.optionSelected);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -110,6 +115,7 @@ class _DrawSizePaperTypeState extends State<DrawSizePaperType> {
                                   scrollDirection: Axis.horizontal,
                                   itemCount: widget.controller.list.length,
                                   itemBuilder: (context, index) {
+                                    Utils.getPaperPrice(context: context);
                                     return Obx(
                                       () => InkWell(
                                         onTap: () {
@@ -118,6 +124,7 @@ class _DrawSizePaperTypeState extends State<DrawSizePaperType> {
                                           widget.controller.updateOptionName(
                                               widget.controller.list[index]
                                                   .optionName);
+                                          Utils.getPaperPrice(context: context);
                                         },
                                         child: Container(
                                             margin: const EdgeInsets.only(

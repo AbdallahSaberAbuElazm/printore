@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:printore/provider/option_provider.dart';
 import 'dart:convert';
 import 'dart:math' as math;
 import 'package:printore/views/shared/styles/colors.dart';
+import 'package:get/get.dart';
+import 'package:printore/controller/paper_price_controller.dart';
+import 'package:provider/provider.dart';
 
 class Utils {
+  static final PaperPriceController _paperPriceController = Get.find();
   static snackBar({required BuildContext context, required String? msg}) {
     return ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(
@@ -52,6 +57,15 @@ class Utils {
           ],
         ),
       ),
+    );
+  }
+
+  static getPaperPrice({required BuildContext context}) {
+    OptionProvider option = Provider.of<OptionProvider>(context, listen: false);
+    _paperPriceController.getPaperPrice(
+      paperColor: option.colorSelected,
+      paperSize: option.sizeSelected,
+      paperType: option.paperTypeSelected,
     );
   }
 }

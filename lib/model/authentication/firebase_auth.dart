@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:path/path.dart';
+import 'package:printore/controller/order_controller.dart';
 import 'package:printore/views/admin/add_print_officers.dart';
 import 'package:printore/views/print_office_layout/po_home_page.dart';
 import 'package:printore/views/print_office_layout/print_office_home.dart';
@@ -118,6 +119,7 @@ class FireAuth {
                   selectedIndex: 0,
                 ),
               ));
+          Get.find<OrderController>();
         } else if (result['printingOfficer'] == true) {
           Get.offAll(
             () => PrintOfficeHome(

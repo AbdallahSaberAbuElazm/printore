@@ -7,14 +7,15 @@ class FileModel {
   String? fileExtension;
   String? uploadAt;
 
-  FileModel(
-      {required this.fileId,
-      required this.fileName,
-      required this.downloadUrl,
-      required this.customerId,
-      required this.numPages,
-      required this.fileExtension,
-      required this.uploadAt});
+  FileModel({
+    required this.fileId,
+    required this.fileName,
+    required this.downloadUrl,
+    required this.customerId,
+    required this.numPages,
+    required this.fileExtension,
+    required this.uploadAt,
+  });
 
   FileModel.fromJson(Map<String, dynamic> jsonObject) {
     fileId = jsonObject['fileId'];

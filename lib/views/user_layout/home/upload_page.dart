@@ -441,19 +441,20 @@ class _UploadPageState extends State<UploadPage> {
                                   snapshot.data!.docs[index]['file_name'] ?? '',
                               fileId: snapshot.data!.docs[index].id,
                               file: FileModel(
-                                  customerId: snapshot.data!.docs[index]
-                                      ['customer'],
-                                  downloadUrl: snapshot.data!.docs[index]
-                                      ['downloadUrl'],
-                                  fileExtension: snapshot.data!.docs[index]
-                                      ['file_extension'],
-                                  fileId: snapshot.data!.docs[index].id,
-                                  fileName: snapshot.data!.docs[index]
-                                      ['file_name'],
-                                  numPages: snapshot.data!.docs[index]
-                                      ['numPages'],
-                                  uploadAt: snapshot.data!.docs[index]
-                                      ['upload_at']),
+                                customerId: snapshot.data!.docs[index]
+                                    ['customer'],
+                                downloadUrl: snapshot.data!.docs[index]
+                                    ['downloadUrl'],
+                                fileExtension: snapshot.data!.docs[index]
+                                    ['file_extension'],
+                                fileId: snapshot.data!.docs[index].id,
+                                fileName: snapshot.data!.docs[index]
+                                    ['file_name'],
+                                numPages: snapshot.data!.docs[index]
+                                    ['numPages'],
+                                uploadAt: snapshot.data!.docs[index]
+                                    ['upload_at'],
+                              ),
                             )));
               }),
           _optionButton(

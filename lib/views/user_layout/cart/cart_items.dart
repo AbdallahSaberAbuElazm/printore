@@ -14,10 +14,13 @@ import 'package:printore/views/user_layout/option/option_screen.dart';
 class CartItems extends StatefulWidget {
   final bool summary;
   final int index;
-  final dynamic map;
-  const CartItems(
-      {Key? key, required this.summary, required this.index, required this.map})
-      : super(key: key);
+  // final dynamic map;
+  const CartItems({
+    Key? key,
+    required this.summary,
+    required this.index,
+    //  required this.map
+  }) : super(key: key);
 
   @override
   State<CartItems> createState() => _CartItemsState();
@@ -32,13 +35,21 @@ class _CartItemsState extends State<CartItems> {
   @override
   void initState() {
     _noOfCopiesController.text = 1.toString();
+    // options = [
+    //   widget.map[widget.index].optionSize,
+    //   widget.map[widget.index].optionPaperType,
+    //   widget.map[widget.index].optionLayout,
+    //   widget.map[widget.index].optionWrapping,
+    //   widget.map[widget.index].optionSide,
+    //   widget.map[widget.index].optionColor,
+    // ];
     options = [
-      widget.map[widget.index].optionSize,
-      widget.map[widget.index].optionPaperType,
-      widget.map[widget.index].optionLayout,
-      widget.map[widget.index].optionWrapping,
-      widget.map[widget.index].optionSide,
-      widget.map[widget.index].optionColor,
+      _cartController.cart[widget.index].optionSize,
+      _cartController.cart[widget.index].optionPaperType,
+      _cartController.cart[widget.index].optionLayout,
+      _cartController.cart[widget.index].optionWrapping,
+      _cartController.cart[widget.index].optionSide,
+      _cartController.cart[widget.index].optionColor,
     ];
     _quantityController.text =
         _cartController.cart[widget.index].noOfCopies.toString();
@@ -85,7 +96,7 @@ class _CartItemsState extends State<CartItems> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         InkWell(
-                          onTap: () => Get.to(() => OptionScreen(
+                          onTap: () => Get.off(() => OptionScreen(
                               updateFile: true,
                               file: _cartController.cart[widget.index],
                               fileId: _cartController.cart[widget.index].fileId,
@@ -119,19 +130,28 @@ class _CartItemsState extends State<CartItems> {
                                         User? user =
                                             FirebaseAuth.instance.currentUser;
                                         await FirebaseStorage.instance
-                                            .refFromURL(widget
-                                                .map[widget.index].downloadUrl)
+                                            .refFromURL(
+                                                // widget
+                                                //   .map[widget.index].downloadUrl
+                                                _cartController
+                                                    .cart[widget.index]
+                                                    .downloadUrl
+                                                    .toString())
                                             .delete();
                                         await FirebaseFirestore.instance
                                             .collection('users')
                                             .doc(user!.uid)
                                             .collection('carts')
                                             .doc(
-                                                widget.map[widget.index].cartId)
+                                                // widget.map[widget.index].cartId,
+                                                _cartController
+                                                    .cart[widget.index].cartId
+                                                    .toString())
                                             .delete();
 
-                                        widget.map.refresh();
-                                        if (widget.map.length < 1) {
+                                        // widget.map.refresh();
+                                        // if (widget.map.length < 1) {
+                                        if (_cartController.cart.isEmpty) {
                                           Get.off(() => Home(
                                               recentPage: const UploadPage(),
                                               selectedIndex: 2));
@@ -163,22 +183,32 @@ class _CartItemsState extends State<CartItems> {
                                           FirebaseAuth.instance.currentUser;
 
                                       await FirebaseStorage.instance
-                                          .refFromURL(widget
-                                              .map[widget.index].downloadUrl)
+                                          .refFromURL(
+                                              // widget
+                                              //   .map[widget.index].downloadUrl
+                                              _cartController.cart[widget.index]
+                                                  .downloadUrl
+                                                  .toString())
                                           .delete();
                                       await FirebaseFirestore.instance
                                           .collection('users')
                                           .doc(user!.uid)
                                           .collection('carts')
-                                          .doc(widget.map[widget.index].cartId)
+                                          .doc(
+                                              // widget.map[widget.index].cartId
+                                              _cartController
+                                                  .cart[widget.index].cartId
+                                                  .toString())
                                           .delete();
 
-                                      widget.map.refresh();
-                                      if (widget.map.length < 1) {
+                                      // widget.map.refresh();
+                                      // if (widget.map.length < 1) {
+                                      if (_cartController.cart.isEmpty) {
                                         Get.off(() => Home(
                                             recentPage: const UploadPage(),
                                             selectedIndex: 2));
                                       }
+                                      _cartController.getAllPriceOffCart();
                                     })),
                         child: const SizedBox(
                             width: 20,
@@ -188,13 +218,19 @@ class _CartItemsState extends State<CartItems> {
                             )),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(left: 25),
+                        padding: EdgeInsets.only(
+                            left: MediaQuery.of(context).size.width / 14),
                         child: Row(
                           children: [
-                            Text(
-                              '0.0',
-                              style: TextStyle(
-                                  color: MainColor.darkGreyColor, fontSize: 14),
+                            Container(
+                              child: Obx(
+                                () => Text(
+                                  '${_cartController.cart[widget.index].totalPrice.toString()}',
+                                  style: TextStyle(
+                                      color: MainColor.darkGreyColor,
+                                      fontSize: 14),
+                                ),
+                              ),
                             ),
                             Text(
                               ' جنيه',
@@ -210,7 +246,9 @@ class _CartItemsState extends State<CartItems> {
             Center(
               child: SizedBox(
                 width: MediaQuery.of(context).size.width / 1.7,
-                child: Text(widget.map[widget.index].fileName,
+                child: Text(
+                    // widget.map[widget.index].fileName,
+                    _cartController.cart[widget.index].fileName.toString(),
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.headline4),
               ),
@@ -363,13 +401,19 @@ class _CartItemsState extends State<CartItems> {
                                                   .cart[widget.index].cartId)
                                               .update({
                                             'noOfCopies': int.parse(
-                                                _quantityController.text)
+                                                _quantityController.text),
+                                            'totalPrice': (_cartController
+                                                    .cart[widget.index]
+                                                    .price!) *
+                                                int.parse(
+                                                    _quantityController.text)
                                           });
 
                                           _cartController.updateQuantity(
                                               widget.index,
                                               int.parse(
                                                   _quantityController.text));
+                                          _cartController.getAllPriceOffCart();
                                         },
                                         child: Text(
                                           'تأكيد',
@@ -526,12 +570,14 @@ class _CartItemsState extends State<CartItems> {
                                 Flexible(
                                   child: SizedBox(
                                       width: 32,
-                                      child: Text(
-                                        ' ${_cartController.cart[widget.index].noOfCopies}',
-                                        textAlign: TextAlign.center,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyText1,
+                                      child: Obx(
+                                        () => Text(
+                                          ' ${_cartController.cart[widget.index].noOfCopies}',
+                                          textAlign: TextAlign.center,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyText1,
+                                        ),
                                       )),
                                 ),
                                 Container(

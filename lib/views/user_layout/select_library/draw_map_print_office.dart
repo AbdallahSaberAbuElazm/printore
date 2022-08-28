@@ -5,7 +5,6 @@
 // import 'package:flutter/material.dart';
 // import 'package:get/get.dart';
 // import 'package:google_maps_flutter/google_maps_flutter.dart';
-// import 'package:printore/views/user_layout/select_library/helpers.dart/map_helper.dart';
 // import 'package:printore/views/user_layout/select_library/locating.dart';
 // import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
@@ -127,18 +126,32 @@ import 'dart:async';
 
 import 'package:fluster/fluster.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:printore/controller/location_controller.dart';
+import 'package:printore/controller/print_officce_controller.dart';
+import 'package:printore/model/service_providers/print_office.dart';
+import 'package:printore/views/shared/styles/colors.dart';
 import 'package:printore/views/shared/styles/styles.dart';
-import 'package:printore/views/user_layout/select_library/helpers.dart/map_helper.dart';
-import 'package:printore/views/user_layout/select_library/helpers.dart/map_marker.dart';
+import 'package:printore/views/user_layout/order/order_summary.dart';
+import 'package:printore/views/user_layout/select_library/helpers/map_helper.dart';
+import 'package:printore/views/user_layout/select_library/helpers/map_marker.dart';
+import 'package:printore/views/user_layout/select_library/providers_working_hours.dart';
 
 class DrawMapPrintOffice extends StatefulWidget {
+  final latitude;
+  final langitude;
+  DrawMapPrintOffice(
+      {Key? key, required this.latitude, required this.langitude})
+      : super(key: key);
   @override
   _DrawMapPrintOfficeState createState() => _DrawMapPrintOfficeState();
 }
 
 class _DrawMapPrintOfficeState extends State<DrawMapPrintOffice> {
   final Completer<GoogleMapController> _mapController = Completer();
+  final LocationController _locationController = Get.find();
+  final PrintOfficeController _printOfficeController = Get.find();
 
   /// Set of displayed markers and cluster markers on the map
   final Set<Marker> _markers = Set();
@@ -171,20 +184,6 @@ class _DrawMapPrintOfficeState extends State<DrawMapPrintOffice> {
   /// Color of the cluster text
   final Color _clusterTextColor = Colors.white;
 
-  /// Example marker coordinates
-  final List<LatLng> _markerLocations = [
-    LatLng(41.147125, -8.611249),
-    LatLng(41.145599, -8.610691),
-    LatLng(41.145645, -8.614761),
-    LatLng(41.146775, -8.614913),
-    LatLng(41.146982, -8.615682),
-    LatLng(41.140558, -8.611530),
-    LatLng(41.138393, -8.608642),
-    LatLng(41.137860, -8.609211),
-    LatLng(41.138344, -8.611236),
-    LatLng(41.139813, -8.609381),
-  ];
-
   /// Called when the Google Map widget is created. Updates the map loading state
   /// and inits the markers.
   void _onMapCreated(GoogleMapController controller) {
@@ -201,17 +200,70 @@ class _DrawMapPrintOfficeState extends State<DrawMapPrintOffice> {
   void _initMarkers() async {
     final List<MapMarker> markers = [];
 
-    for (LatLng markerLocation in _markerLocations) {
+    for (int i = 0; i < _printOfficeController.list.length; i++) {
+      LatLng markerLocation = _locationController.markerLocations[i];
+
       final BitmapDescriptor markerImage =
           await MapHelper.getMarkerImageFromUrl(_markerImageUrl);
 
-      markers.add(
-        MapMarker(
-          id: _markerLocations.indexOf(markerLocation).toString(),
+      // markers.add(
+      //   MapMarker(
+      //     id: _locationController.markerLocations
+      //         .indexOf(markerLocation)
+      //         .toString(),
+      //     position: markerLocation,
+      //     icon: markerImage,
+      //   ),
+      // );
+
+      _markers.add(Marker(
+          markerId: MarkerId(_locationController.markerLocations
+              .indexOf(markerLocation)
+              .toString()),
           position: markerLocation,
           icon: markerImage,
-        ),
-      );
+          onTap: () {
+            setState(() {
+              _printOfficeController.updateDay(
+                  _printOfficeController.list[i].printOfficeName.toString());
+              _printOfficeController.updatePrintOffice(PrintOffice(
+                  id: _printOfficeController.list[i].id.toString(),
+                  printOfficeName:
+                      _printOfficeController.list[i].printOfficeName.toString(),
+                  printOfficeUrl:
+                      _printOfficeController.list[i].printOfficeUrl.toString(),
+                  printOfficeAddress: _printOfficeController
+                      .list[i].printOfficeAddress
+                      .toString(),
+                  printOfficeRating:
+                      _printOfficeController.list[i].printOfficeRating,
+                  city: _printOfficeController.list[i].city.toString(),
+                  governorate:
+                      _printOfficeController.list[i].governorate.toString(),
+                  status: true,
+                  latitude: _printOfficeController.list[i].latitude,
+                  longitude: _printOfficeController.list[i].longitude));
+            });
+          },
+          infoWindow: InfoWindow(
+              title: '${_printOfficeController.list[i].printOfficeName}',
+              snippet: '${_printOfficeController.list[i].printOfficeAddress}',
+              onTap: () {
+                _printOfficeController.getWorkingHours(
+                    city: _printOfficeController.list[i].city.toString(),
+                    governorate:
+                        _printOfficeController.list[i].governorate.toString(),
+                    printOfficeId:
+                        _printOfficeController.list[i].id.toString());
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return ProvidersWorkingHours(
+                          addressTitle: _printOfficeController
+                              .list[i].printOfficeName
+                              .toString());
+                    });
+              })));
     }
 
     _clusterManager = await MapHelper.initClusterManager(
@@ -236,17 +288,17 @@ class _DrawMapPrintOfficeState extends State<DrawMapPrintOffice> {
       _areMarkersLoading = true;
     });
 
-    final updatedMarkers = await MapHelper.getClusterMarkers(
-      _clusterManager,
-      _currentZoom,
-      _clusterColor,
-      _clusterTextColor,
-      80,
-    );
+    // final updatedMarkers = await MapHelper.getClusterMarkers(
+    //   _clusterManager,
+    //   _currentZoom,
+    //   _clusterColor,
+    //   _clusterTextColor,
+    //   80,
+    // );
 
-    _markers
-      ..clear()
-      ..addAll(updatedMarkers);
+    // _markers
+    //   ..clear()
+    //   ..addAll(updatedMarkers);
 
     setState(() {
       _areMarkersLoading = false;
@@ -257,8 +309,8 @@ class _DrawMapPrintOfficeState extends State<DrawMapPrintOffice> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Styles.appBarText('مواقع مقدمي خدمة الطباعة', context),
-      ),
+          title: Styles.appBarText('مواقع مقدمي خدمة الطباعة', context),
+          backgroundColor: MainColor.darkGreyColor),
       body: Stack(
         children: <Widget>[
           // Google Map widget
@@ -270,8 +322,9 @@ class _DrawMapPrintOfficeState extends State<DrawMapPrintOffice> {
               myLocationButtonEnabled: true,
               myLocationEnabled: true,
               zoomControlsEnabled: true,
+              padding: const EdgeInsets.only(bottom: 80),
               initialCameraPosition: CameraPosition(
-                target: LatLng(41.143029, -8.611274),
+                target: LatLng(widget.latitude, widget.langitude),
                 zoom: _currentZoom,
               ),
               markers: _markers,
@@ -283,7 +336,10 @@ class _DrawMapPrintOfficeState extends State<DrawMapPrintOffice> {
           // Map loading indicator
           Opacity(
             opacity: _isMapLoading ? 1 : 0,
-            child: Center(child: CircularProgressIndicator()),
+            child: Center(
+                child: CircularProgressIndicator(
+              color: MainColor.darkGreyColor,
+            )),
           ),
 
           // Map markers loading indicator
@@ -305,6 +361,26 @@ class _DrawMapPrintOfficeState extends State<DrawMapPrintOffice> {
                 ),
               ),
             ),
+          Align(
+              alignment: FractionalOffset.bottomCenter,
+              child: Padding(
+                  padding: EdgeInsets.only(left: 12, right: 12),
+                  child: SizedBox(
+                    height: 50,
+                    width: MediaQuery.of(context).size.width - 24,
+                    child: ElevatedButton(
+                      onPressed:
+                          (_printOfficeController.office.value.isNotEmpty)
+                              ? () {
+                                  Get.to(() => OrderSummary());
+                                }
+                              : null,
+                      child: const Text(
+                        'اختار مكتب طباعة',
+                        style: TextStyle(color: Colors.white, fontSize: 17),
+                      ),
+                    ),
+                  ))),
         ],
       ),
     );

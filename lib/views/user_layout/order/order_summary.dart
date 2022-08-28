@@ -67,6 +67,8 @@ class OrderSummary extends StatelessWidget {
                   order: Order(
                       orderId: '',
                       printOfficeId: _printOfficeController.printOffice[0].id,
+                      printOfficeName:
+                          _printOfficeController.printOffice[0].printOfficeName,
                       customerId: user!.uid,
                       qrCode:
                           '${Constant.user!.uid}${UserSharedPreferences.getUserName()}',
@@ -144,7 +146,7 @@ class OrderSummary extends StatelessWidget {
         return CartItems(
           index: index,
           summary: true,
-          map: _cartController.cart,
+          // map: _cartController.cart,
         );
       },
     );
@@ -175,10 +177,12 @@ class OrderSummary extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(left: 25),
           child: Row(
-            children: const [
-              Text(
-                '0.0',
-                style: TextStyle(color: Colors.white, fontSize: 18),
+            children: [
+              Obx(
+                () => Text(
+                  '${_cartController.priceCart.value.toPrecision(2).toString()}',
+                  style: TextStyle(color: Colors.white, fontSize: 18),
+                ),
               ),
               Padding(
                 padding: EdgeInsets.only(right: 5),
@@ -363,13 +367,13 @@ class OrderSummary extends StatelessWidget {
                     ),
                   ),
                 ),
-                Text(
-                  'خلال 15 دقيقة',
-                  style: TextStyle(
-                      color: MainColor.darkGreyColor,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w700),
-                ),
+                // Text(
+                //   'خلال 15 دقيقة',
+                //   style: TextStyle(
+                //       color: MainColor.darkGreyColor,
+                //       fontSize: 10,
+                //       fontWeight: FontWeight.w700),
+                // ),
               ],
             )
           ],

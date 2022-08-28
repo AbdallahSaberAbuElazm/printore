@@ -1,9 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:printore/controller/review_controller.dart';
+import 'package:printore/model/review/review.dart';
 import 'package:printore/views/shared/styles/colors.dart';
 import 'package:printore/views/shared/styles/styles.dart';
 import 'package:printore/views/shared/util/check_internet_connection.dart';
+import 'package:printore/views/shared/util/util.dart';
 import 'package:printore/views/shared/widgets/rating_builder.dart';
 import 'package:printore/views/user_layout/home/home.dart';
 import 'package:printore/views/user_layout/home/home_page.dart';
@@ -17,17 +20,19 @@ class ReviewScreen extends StatefulWidget {
 
 class _ReviewScreenState extends State<ReviewScreen> {
   List options = [];
-  final ReviewController _ratingController = Get.find<ReviewController>();
+  final ReviewController _reviewController = Get.find<ReviewController>();
   final TextEditingController _noteController = TextEditingController();
+  User? user = FirebaseAuth.instance.currentUser;
+
   @override
   void initState() {
-    _ratingController.updateNewRating(0.0);
+    _reviewController.updateNewRating(0.0);
     super.initState();
   }
 
   @override
   void dispose() {
-    _ratingController.dispose();
+    _reviewController.dispose();
     super.dispose();
   }
 
@@ -81,8 +86,11 @@ class _ReviewScreenState extends State<ReviewScreen> {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 30, bottom: 20),
-                  child: RatingBuilder(
-                      rating: _ratingController.newRating.value, itemSize: 45),
+                  child: Obx(
+                    () => RatingBuilder(
+                        rating: _reviewController.newRating.value,
+                        itemSize: 45),
+                  ),
                 ),
                 Divider(
                   height: 2,
@@ -123,18 +131,43 @@ class _ReviewScreenState extends State<ReviewScreen> {
           left: MediaQuery.of(context).size.width / 5,
           right: MediaQuery.of(context).size.width / 5),
       height: 50,
-      child: ElevatedButton(
-        onPressed: () {},
-        style: ButtonStyle(
-            padding: MaterialStateProperty.all(
-                const EdgeInsets.only(right: 15, left: 10)),
-            backgroundColor: MaterialStateProperty.all(MainColor.darkGreyColor),
-            alignment: Alignment.center),
-        child: const Text(
-          'إرسال',
-          style: TextStyle(
-              color: Colors.white, fontSize: 16, fontWeight: FontWeight.w700),
-          textAlign: TextAlign.center,
+      child: Obx(
+        () => ElevatedButton(
+          onPressed: (_reviewController.newRating.value > 0.0)
+              ? () {
+                  _reviewController.uploadReview(
+                    toMap: Review(
+                            userId: user!.uid.toString(),
+                            rating:
+                                _reviewController.newRating.value.toString(),
+                            improvements: options,
+                            opinions: _noteController.text)
+                        .toMap(),
+                  );
+                  Utils.snackBar(
+                      context: context,
+                      msg: 'شكرا يا فندم علي تقييمك لخدماتنا وتم ارسال تقييمك');
+                  _reviewController.updateNewRating(0.0);
+                  _noteController.text = '';
+                  setState(() {
+                    options.clear();
+                  });
+                }
+              : () {
+                  Utils.snackBar(context: context, msg: 'من فضلك ادخل تقييمك');
+                },
+          style: ButtonStyle(
+              padding: MaterialStateProperty.all(
+                  const EdgeInsets.only(right: 15, left: 10)),
+              backgroundColor:
+                  MaterialStateProperty.all(MainColor.darkGreyColor),
+              alignment: Alignment.center),
+          child: const Text(
+            'إرسال',
+            style: TextStyle(
+                color: Colors.white, fontSize: 16, fontWeight: FontWeight.w700),
+            textAlign: TextAlign.center,
+          ),
         ),
       ),
     );

@@ -4,7 +4,9 @@ import 'package:printore/services/firestore_db.dart';
 
 class SideColorController extends GetxController {
   final list = <Side>[].obs;
-  final side = 'جانب واحد'.obs;
+  final side = 'وجه واحد'.obs;
+  final priceSide = 0.0.obs;
+  final noOfSide = 0.obs;
   final color = 'أبيض-أسود'.obs;
 
   @override
@@ -18,8 +20,18 @@ class SideColorController extends GetxController {
     update();
   }
 
+  getPriceSide(double price) {
+    priceSide.value = price;
+    update();
+  }
+
   void updateOptionColor(String colorName) {
     color.value = colorName;
+    update();
+  }
+
+  getNoOfSide(int side) {
+    noOfSide.value = side;
     update();
   }
 }

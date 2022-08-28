@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:printore/controller/cart_controller.dart';
 import 'package:printore/controller/print_officce_controller.dart';
 import 'package:printore/model/service_providers/print_office.dart';
 import 'package:printore/views/shared/styles/colors.dart';
@@ -8,14 +9,12 @@ import 'package:printore/views/user_layout/select_library/providers_working_hour
 
 class DrawPrintOffice extends StatefulWidget {
   // final int? index;
-  final dynamic printOfficeController;
-  final PrintOfficeController controller;
-  const DrawPrintOffice(
-      {Key? key,
-      // required this.index,
-      required this.printOfficeController,
-      required this.controller})
-      : super(key: key);
+  final printOfficeController;
+  const DrawPrintOffice({
+    Key? key,
+    // required this.index,
+    required this.printOfficeController,
+  }) : super(key: key);
   static const IconData directions =
       IconData(0xe1d1, fontFamily: 'MaterialIcons', matchTextDirection: true);
 
@@ -24,6 +23,8 @@ class DrawPrintOffice extends StatefulWidget {
 }
 
 class _DrawPrintOfficeState extends State<DrawPrintOffice> {
+  final PrintOfficeController _printOfficeController = Get.find();
+  final CartController _cartController = Get.find();
   @override
   void initState() {
     super.initState();
@@ -39,9 +40,9 @@ class _DrawPrintOfficeState extends State<DrawPrintOffice> {
   Widget build(BuildContext context) {
     return Obx(() => InkWell(
           onTap: () {
-            widget.controller
+            _printOfficeController
                 .updateDay(widget.printOfficeController['printOfficeName']);
-            widget.controller.updatePrintOffice(PrintOffice(
+            _printOfficeController.updatePrintOffice(PrintOffice(
                 id: widget.printOfficeController['printOfficeId'],
                 printOfficeName:
                     widget.printOfficeController['printOfficeName'],
@@ -52,7 +53,9 @@ class _DrawPrintOfficeState extends State<DrawPrintOffice> {
                     widget.printOfficeController['rating'].toDouble(),
                 city: widget.printOfficeController['city'],
                 governorate: widget.printOfficeController['governorate'],
-                status: true));
+                status: true,
+                latitude: widget.printOfficeController['latitude'],
+                longitude: widget.printOfficeController['longitude']));
           },
           child: Stack(
             children: [
@@ -62,7 +65,7 @@ class _DrawPrintOfficeState extends State<DrawPrintOffice> {
                 // height: 195,
                 width: double.infinity,
                 decoration: BoxDecoration(
-                    gradient: (widget.controller.office ==
+                    gradient: (_printOfficeController.office ==
                             widget.printOfficeController['printOfficeName'])
                         ? LinearGradient(
                             begin: Alignment.topLeft,
@@ -72,7 +75,7 @@ class _DrawPrintOfficeState extends State<DrawPrintOffice> {
                                 MainColor.yellowColor
                               ])
                         : null,
-                    color: (widget.controller.office ==
+                    color: (_printOfficeController.office ==
                             widget.printOfficeController['printOfficeName'])
                         ? null
                         : MainColor.darkGreyColor,
@@ -176,10 +179,10 @@ class _DrawPrintOfficeState extends State<DrawPrintOffice> {
                                 const SizedBox(
                                   height: 5,
                                 ),
-                                Text(
-                                  'خلال 10 دقيقة',
-                                  style: _style2,
-                                ),
+                                // Text(
+                                //   'خلال 10 دقيقة',
+                                //   style: _style2,
+                                // ),
                               ],
                             )
                           ],
@@ -194,12 +197,12 @@ class _DrawPrintOfficeState extends State<DrawPrintOffice> {
                           children: [
                             InkWell(
                               onTap: () {
-                                widget.controller.getWorkingHours(
+                                _printOfficeController.getWorkingHours(
                                     city: widget.printOfficeController['city'],
                                     governorate: widget
                                         .printOfficeController['governorate'],
                                     printOfficeId:
-                                        widget.printOfficeController['id']);
+                                        widget.printOfficeController.id);
                                 showDialog(
                                     context: context,
                                     builder: (context) {
@@ -290,7 +293,8 @@ class _DrawPrintOfficeState extends State<DrawPrintOffice> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.center,
                                           children: [
-                                            Text('0.0',
+                                            Text(
+                                                '${_cartController.priceCart.value}',
                                                 style: TextStyle(
                                                     color:
                                                         MainColor.darkGreyColor,

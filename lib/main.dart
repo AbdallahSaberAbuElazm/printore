@@ -8,11 +8,14 @@ import 'package:printore/controller/freq_asked_question__controller.dart';
 import 'package:printore/controller/layout_controller.dart';
 import 'package:printore/controller/location_controller.dart';
 import 'package:printore/controller/order_controller.dart';
+import 'package:printore/controller/paper_price_controller.dart';
 import 'package:printore/controller/paper_type_controller.dart';
 import 'package:printore/controller/print_officce_controller.dart';
 import 'package:printore/controller/review_controller.dart';
 import 'package:printore/controller/side_color_controller.dart';
 import 'package:printore/controller/size_controller.dart';
+import 'package:printore/controller/ticket_controller.dart';
+import 'package:printore/controller/ticket_type_controller.dart';
 import 'package:printore/controller/user_controller.dart';
 import 'package:printore/controller/wrapping_controller.dart';
 import 'package:printore/provider/option_provider.dart';
@@ -56,6 +59,9 @@ getControllers() {
   Get.lazyPut<SideColorController>(() => SideColorController(), fenix: true);
   Get.lazyPut<CartController>(() => CartController(), fenix: true);
   Get.lazyPut<OrderController>(() => OrderController(), fenix: true);
+  Get.lazyPut<PaperPriceController>(() => PaperPriceController(), fenix: true);
+  Get.lazyPut<TicketController>(() => TicketController(), fenix: true);
+  Get.lazyPut<TicketTypeController>(() => TicketTypeController(), fenix: true);
 }
 
 void configLoading() {

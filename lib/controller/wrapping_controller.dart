@@ -6,6 +6,7 @@ class WrappingController extends GetxController {
   final list = <Wrapping>[].obs;
 
   var optionNameSelected = 'بدون تغليف'.obs;
+  final wrappingPrice = 0.0.obs;
 
   @override
   void onInit() {
@@ -13,8 +14,13 @@ class WrappingController extends GetxController {
     super.onInit();
   }
 
-  void updateOptionName(String sizeName) {
-    optionNameSelected.value = sizeName;
+  void updateOptionName(String wrapping) {
+    optionNameSelected.value = wrapping;
+    update();
+  }
+
+  updateOptionPrice(double price) {
+    wrappingPrice.value = price;
     update();
   }
 }

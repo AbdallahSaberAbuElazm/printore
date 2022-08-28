@@ -10,15 +10,17 @@ class Cart {
   int noOfCopies = 1;
   String? fileExtension;
   String? uploadAt;
-  late String optionSize;
-  late String optionPaperType;
-  late String optionColor;
-  late String optionSide;
-  late String optionLayout;
-  late String optionWrapping;
+  String? optionSize;
+  String? optionPaperType;
+  String? optionColor;
+  String? optionSide;
+  String? optionLayout;
+  String? optionWrapping;
   String? optionNote;
   bool? ordered;
   bool? finished = false;
+  double? price;
+  double? totalPrice;
   Cart(
       {required this.cartId,
       required this.optionSize,
@@ -37,7 +39,9 @@ class Cart {
       required this.fileExtension,
       required this.uploadAt,
       required this.ordered,
-      required this.finished});
+      required this.finished,
+      required this.price,
+      required this.totalPrice});
 
   static Cart fromSnapShot(DocumentSnapshot jsonObject) {
     return Cart(
@@ -58,7 +62,9 @@ class Cart {
         fileExtension: jsonObject['file_extension'],
         uploadAt: jsonObject['upload_at'],
         ordered: jsonObject['ordered'],
-        finished: jsonObject['finished']);
+        finished: jsonObject['finished'],
+        price: jsonObject['price'].toDouble(),
+        totalPrice: jsonObject['totalPrice'].toDouble());
   }
 
   Map<String, dynamic> toMap() {
@@ -80,7 +86,9 @@ class Cart {
       'customer': customerId,
       'upload_at': uploadAt,
       'ordered': ordered,
-      'finished': finished
+      'finished': finished,
+      'price': price,
+      'totalPrice': totalPrice
     };
   }
 }

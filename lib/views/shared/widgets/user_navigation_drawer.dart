@@ -18,6 +18,7 @@ import 'package:printore/views/user_layout/home/upload_page.dart';
 import 'package:printore/views/user_layout/offers/offers.dart';
 import 'package:printore/views/user_layout/profile/my_addresses.dart';
 import 'package:printore/views/user_layout/qr_code/qr_code_user.dart';
+import 'package:printore/views/user_layout/review/review_screen.dart';
 import 'package:printore/views/user_layout/who_are_we/contact_us.dart';
 import 'package:printore/views/user_layout/who_are_we/who_are_we.dart';
 import 'package:provider/provider.dart';
@@ -148,6 +149,11 @@ class _UserNavigationDrawerState extends State<UserNavigationDrawer> {
               func: () => Get.off(() => const FrequentlyAskedQuestionScreen()),
               title: 'الأسئلة الشائعة',
               icon: Icons.question_mark_rounded),
+          _drawListTitle(
+              context: context,
+              func: () => Get.to(() => ReviewScreen()),
+              title: 'تقييم الخدمة',
+              icon: Icons.reviews),
           _drawListTitle(
               context: context,
               func: () => Get.to(() => WhoAreWe()),

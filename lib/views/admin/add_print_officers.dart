@@ -41,6 +41,8 @@ class _AddPrintOfficersState extends State<AddPrintOfficers> {
   final _priceSizeController = TextEditingController();
   final _priceWrappingController = TextEditingController();
   final _workingHoursController = TextEditingController();
+  final _latitudeController = TextEditingController();
+  final _longitudeController = TextEditingController();
   final LocationController _locationController = Get.find<LocationController>();
   bool _switchVal = false;
   Map<String, dynamic> sizeMap = {};
@@ -63,6 +65,8 @@ class _AddPrintOfficersState extends State<AddPrintOfficers> {
     _workingHoursController.dispose();
     _priceSizeController.dispose();
     _priceWrappingController.dispose();
+    _latitudeController.dispose();
+    _longitudeController.dispose();
     super.dispose();
   }
 
@@ -165,6 +169,16 @@ class _AddPrintOfficersState extends State<AddPrintOfficers> {
                       type: TextInputType.name,
                       controller: _cityController),
                 ),
+                TextFormFieldController(
+                    isEnabled: true,
+                    name: 'خط العرض (latitude)',
+                    type: TextInputType.name,
+                    controller: _latitudeController),
+                TextFormFieldController(
+                    isEnabled: true,
+                    name: 'خط الطول (longitude)',
+                    type: TextInputType.name,
+                    controller: _longitudeController),
                 _addPrintOffice(context),
                 _uploadLogo(context),
                 const SizedBox(
@@ -529,7 +543,9 @@ class _AddPrintOfficersState extends State<AddPrintOfficers> {
                             .toString()
                             .trimLeft()
                             .trimRight(),
-                        status: false));
+                        status: false,
+                        latitude: double.parse(_latitudeController.text),
+                        longitude: double.parse(_longitudeController.text)));
               },
               child: const Center(
                 child: Text(

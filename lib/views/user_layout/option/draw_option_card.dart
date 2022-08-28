@@ -2,9 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:printore/controller/cart_controller.dart';
 
 import 'package:printore/controller/layout_controller.dart';
+import 'package:printore/controller/paper_price_controller.dart';
 import 'package:printore/controller/paper_type_controller.dart';
+import 'package:printore/controller/side_color_controller.dart';
 import 'package:printore/controller/size_controller.dart';
 import 'package:printore/controller/wrapping_controller.dart';
 
@@ -38,10 +41,17 @@ class _DrawOptionCardState extends State<DrawOptionCard> {
   Stream<QuerySnapshot<Map<String, dynamic>>>? streamData;
   OptionProvider? option;
   final TextEditingController _noteController = TextEditingController();
-  final SizeController sizeController = Get.find<SizeController>();
-  final PaperTypeController paperTypeController =
-      Get.find<PaperTypeController>();
-  final WrappingController wrappingController = Get.find<WrappingController>();
+  // final SizeController _sizeController = Get.find<SizeController>();
+  // final PaperTypeController _paperTypeController =
+  //     Get.find<PaperTypeController>();
+  final WrappingController _wrappingController = Get.find<WrappingController>();
+  final LayoutController _layoutController = Get.find<LayoutController>();
+  final PaperPriceController _paperPriceController =
+      Get.find<PaperPriceController>();
+  final SideColorController _sideColorController =
+      Get.find<SideColorController>();
+  final CartController _cartController = Get.find();
+
   @override
   void dispose() {
     _noteController.dispose();
@@ -65,33 +75,40 @@ class _DrawOptionCardState extends State<DrawOptionCard> {
               updateOption: option!.updateSizeSelected,
               optionName: 'حجم الورقة',
               fileNameFirebase: 'optionName',
-              optionSelected: option!.sizeSelected,
+              optionSelected: (widget.statusFile)
+                  ? widget.fileModel.optionSize
+                  : option!.sizeSelected,
             ),
             DrawSizePaperType(
               controller: Get.find<PaperTypeController>(),
               updateOption: option!.updatePaperTypeSelected,
               optionName: 'نوع الورقة',
               fileNameFirebase: 'optionName',
-              optionSelected: option!.paperTypeSelected,
+              optionSelected: (widget.statusFile)
+                  ? widget.fileModel.optionPaperType
+                  : option!.paperTypeSelected,
             ),
             const DrawColorSelected(),
             DrawPaperOption(
-              controller: Get.find<LayoutController>(),
+              controller: _layoutController,
               updateOption: option!.updateLayoutSelected,
               optionName: 'تخطييط',
               fileNameFirebase: 'optionName',
-              optionSelected: option!.layoutSelected,
+              optionSelected: (widget.statusFile)
+                  ? widget.fileModel.optionLayout
+                  : option!.layoutSelected,
             ),
             DrawPaperOption(
-                controller: Get.find<WrappingController>(),
+                controller: _wrappingController,
                 optionName: 'تغليف',
                 fileNameFirebase: 'optionName',
-                optionSelected: option!.wrappingSelected,
+                optionSelected: (widget.statusFile)
+                    ? widget.fileModel.optionWrapping
+                    : option!.wrappingSelected,
                 updateOption: option!.updateWrappingSelected),
             DrawSideSelected(
-              streamSide:
-                  FirebaseFirestore.instance.collection('sides').snapshots(),
-            ),
+                controller: _sideColorController,
+                updateOption: option!.updateSideSelected),
             Styles.addNote(context: context, controller: _noteController),
             _addButton()
           ],
@@ -105,27 +122,40 @@ class _DrawOptionCardState extends State<DrawOptionCard> {
         height: 50,
         child: ElevatedButton(
           onPressed: () async {
+            User? user = FirebaseAuth.instance.currentUser;
             OptionModel optionModel = OptionModel(
                 optionLayout: option!.layoutSelected,
                 optionSize: option!.sizeSelected,
                 optionPaperType: option!.paperTypeSelected,
-                optionSide: option!.sideSelected,
+                optionSide: _sideColorController.side.value,
                 optionWrapping: option!.wrappingSelected,
                 optionNote: (_noteController.text.isNotEmpty)
                     ? _noteController.text
-                    : widget.fileModel.optionNote,
+                    : (widget.statusFile)
+                        ? widget.fileModel.optionNote
+                        : '',
                 optionColor: option!.colorSelected);
-            // Product product = Product(
-            //     file: widget.fileModel, option: optionModel, noOfCopies: 1);
-            User? user = FirebaseAuth.instance.currentUser;
-            // _cartController = Get.find<CartController>();
-            // _cartController.addProduct(product);
+
+            final filePrice = _cartController.calculateFilePrice(
+                numOfPages: widget.fileModel.numPages,
+                numOfCopies: 1,
+                paperPrice: _paperPriceController.paperPrice.last.price,
+                layoutNumOfPages: _layoutController.layoutNumber.value,
+                layoutPrice: _layoutController.layoutPrice.value,
+                wrappingPrice: _wrappingController.wrappingPrice.value,
+                side: _sideColorController.noOfSide.value,
+                priceSide: _sideColorController.priceSide.value);
 
             Map<String, dynamic> productMap = {};
             productMap.addAll(widget.fileModel.toMap());
             productMap.addAll(optionModel.toMap());
-            productMap
-                .addAll({'noOfCopies': 1, 'ordered': false, 'finished': false});
+            productMap.addAll({
+              'noOfCopies': 1,
+              'ordered': false,
+              'finished': false,
+              'price': filePrice,
+              'totalPrice': filePrice
+            });
 
             (widget.statusFile)
                 ? await FirebaseFirestore.instance
@@ -141,7 +171,7 @@ class _DrawOptionCardState extends State<DrawOptionCard> {
                     .doc(widget.fileId)
                     .set(productMap);
 
-            if (!widget.statusFile == false) {
+            if (widget.statusFile == false) {
               await FirebaseFirestore.instance
                   .collection('users')
                   .doc(user.uid)
@@ -150,6 +180,9 @@ class _DrawOptionCardState extends State<DrawOptionCard> {
                   .delete();
             }
             Get.off(() => CartScreen());
+            CircularProgressIndicator(
+              color: MainColor.darkGreyColor,
+            );
           },
           style: ButtonStyle(
               padding: MaterialStateProperty.all(

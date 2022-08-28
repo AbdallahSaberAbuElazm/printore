@@ -4,6 +4,7 @@ import 'package:flutter_switch/flutter_switch.dart';
 import 'package:get/get.dart';
 import 'package:printore/controller/location_controller.dart';
 import 'package:printore/controller/print_officce_controller.dart';
+import 'package:printore/model/service_providers/print_office.dart';
 import 'package:printore/views/auth/widgets/text_form_field.dart';
 import 'package:printore/views/shared/styles/colors.dart';
 import 'package:printore/views/shared/styles/styles.dart';
@@ -34,7 +35,7 @@ class _LocatingState extends State<Locating> {
   int indexSelected = 0;
   int printOffice = 0;
   final LocationController _locationController = Get.find<LocationController>();
-  final PrintOfficeController printOfficeController =
+  final PrintOfficeController _printOfficeController =
       Get.find<PrintOfficeController>();
   @override
   void initState() {
@@ -77,9 +78,10 @@ class _LocatingState extends State<Locating> {
         bottomSheet: Obx(() => BottomCenterButton(
               buttonTitle: 'إستمرار',
               onPressed: () {
+                
                 Get.to(() => OrderSummary());
               },
-              actionRelated: (printOfficeController.office.value.isNotEmpty)
+              actionRelated: (_printOfficeController.office.value.isNotEmpty)
                   ? true
                   : false,
             )),
@@ -148,14 +150,15 @@ class _LocatingState extends State<Locating> {
                           controller: _governorateController,
                           addressTitle: 'محافظتك',
                           list: _locationController.governorateList,
-                          saveLocation: printOfficeController.updateGovernorate,
+                          saveLocation:
+                              _printOfficeController.updateGovernorate,
                         )).then((value) {
-                  if (printOfficeController.governorate.isNotEmpty) {
+                  if (_printOfficeController.governorate.isNotEmpty) {
                     setState(() {
                       printOffice++;
                     });
                     _locationController.updateCityList(
-                        printOfficeController.governorate.value);
+                        _printOfficeController.governorate.value);
                   }
                 });
               },
@@ -178,9 +181,9 @@ class _LocatingState extends State<Locating> {
                             controller: _cityController,
                             addressTitle: 'إختار مدينتك/قريتك',
                             list: _locationController.cityList,
-                            saveLocation: printOfficeController.updateCity,
+                            saveLocation: _printOfficeController.updateCity,
                           )).then((value) {
-                    if (printOfficeController.city.isNotEmpty) {
+                    if (_printOfficeController.city.isNotEmpty) {
                       setState(() {
                         printOffice++;
                       });
@@ -320,7 +323,14 @@ class _LocatingState extends State<Locating> {
               onTap: () {
                 setState(() {
                   indexSelected = 1;
-                  Get.to(DrawMapPrintOffice());
+                  Get.to(DrawMapPrintOffice(
+                    latitude: _locationController
+                        .cityList[_printOfficeController.cityIndex.value]
+                        .latitude,
+                    langitude: _locationController
+                        .cityList[_printOfficeController.cityIndex.value]
+                        .langitude,
+                  ));
                 });
               },
               child: Column(
@@ -378,8 +388,8 @@ class _LocatingState extends State<Locating> {
             child: StreamBuilder(
                 stream: FirebaseFirestore.instance
                     .collection('serviceProvidersPrintOffices')
-                    .doc(printOfficeController.governorate.value)
-                    .collection(printOfficeController.city.value)
+                    .doc(_printOfficeController.governorate.value)
+                    .collection(_printOfficeController.city.value)
                     .snapshots(),
                 builder: (context,
                     AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>>
@@ -393,6 +403,8 @@ class _LocatingState extends State<Locating> {
                         ),
                       );
                     default:
+                      _locationController.clearMarkerLocaitonsList();
+                      _printOfficeController.list.clear();
                       return ListView.builder(
                           itemCount: snapshot.data!.docs.length,
                           itemBuilder: (context, index) {
@@ -402,9 +414,35 @@ class _LocatingState extends State<Locating> {
                                   child: CircularProgressIndicator(
                                       color: MainColor.darkGreyColor));
                             }
+                            _locationController.updateMarkerLocations(
+                                latitude: snapshot.data!.docs[index]
+                                    ['latitude'],
+                                longitude: snapshot.data!.docs[index]
+                                    ['longitude']);
+                            _printOfficeController.updateListOfPrintOffice(
+                                printOffice: PrintOffice(
+                                    id: snapshot.data!.docs[index].id,
+                                    printOfficeName: snapshot.data!.docs[index]
+                                        ['printOfficeName'],
+                                    printOfficeUrl: snapshot.data!.docs[index]
+                                        ['printOfficeUrl'],
+                                    printOfficeAddress: snapshot.data!
+                                        .docs[index]['printOfficeAddress'],
+                                    printOfficeRating: snapshot
+                                        .data!.docs[index]['rating']
+                                        .toDouble(),
+                                    city: snapshot.data!.docs[index]['city'],
+                                    governorate: snapshot.data!.docs[index]
+                                        ['governorate'],
+                                    status: snapshot.data!.docs[index]
+                                        ['status'],
+                                    latitude: snapshot.data!.docs[index]
+                                        ['latitude'],
+                                    longitude: snapshot.data!.docs[index]
+                                        ['longitude']));
                             return DrawPrintOffice(
                               printOfficeController: snapshot.data!.docs[index],
-                              controller: printOfficeController,
+                             
                             );
                           });
                   }
